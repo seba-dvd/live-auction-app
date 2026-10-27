@@ -1,0 +1,54 @@
+@startuml er-auction-db
+!pragma layout smetana
+!include ../uml/_style.puml
+hide circle
+hide empty members
+title Schema auction_db — diagrama entitate-relație\n<size:11>DRAFT — responsabil: K. * = NOT NULL</size>
+
+entity "items" as items {
+  * id : BIGINT <<PK>>
+  --
+  * seller_id : BIGINT <<ref. logică>>
+  * title : VARCHAR(120)
+  * description : VARCHAR(2000)
+  * created_at : DATETIME(6)
+}
+
+entity "item_photos" as photos {
+  * id : BIGINT <<PK>>
+  --
+  * item_id : BIGINT <<FK>>
+  * filename : VARCHAR(64) <<UQ>>
+  * position : INT
+  ..
+  UQ (item_id, position), position 0..4
+}
+
+entity "auctions" as auctions {
+  * id : BIGINT <<PK>>
+  --
+  * item_id : BIGINT <<FK, UQ>>
+  * seller_id : BIGINT <<ref. logică>>
+  * starting_price : BIGINT
+  * min_increment : BIGINT
+  * current_price : BIGINT
+  highest_bidder_id : BIGINT <<ref. logică>>
+  * bid_count : INT
+  * start_time : DATETIME(6)
+  * end_time : DATETIME(6)
+  * original_end_time : DATETIME(6)
+  * extension_count : INT
+  * status : VARCHAR(20)
+  winner_id : BIGINT <<ref. logică>>
+  final_price : BIGINT
+  * settlement_status : VARCHAR(20)
+  * version : BIGINT
+  * created_at : DATETIME(6)
+  ..
+  status ∈ {SCHEDULED, ACTIVE, ENDED}
+  settlement_status ∈ {NONE, PENDING, DONE}
+}
+
+items ||--o{ photos : item_id
+items ||--|| auctions : item_id
+@enduml

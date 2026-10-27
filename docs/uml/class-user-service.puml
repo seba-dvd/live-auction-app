@@ -1,0 +1,100 @@
+@startuml class-user-service
+!pragma layout smetana
+!include _style.puml
+hide circle
+hide empty members
+left to right direction
+title user-service — diagrama de clase\n<size:11>DRAFT — responsabil: D</size>
+
+package "service" {
+  class AuthService {
+    + register(req : RegisterRequest) : UserDto
+    + login(req : LoginRequest) : LoginResponse
+  }
+  class JwtService {
+    + issueToken(user : User) : String
+  }
+  class UserService {
+    + getMe(userId : long) : UserDto
+    + updateMe(userId : long, req : UpdateProfileRequest) : UserDto
+    + getPublicProfile(id : long) : PublicUserDto
+  }
+  class WalletService {
+    + getWallet(userId : long) : WalletDto
+    + topUp(userId : long, amount : long) : WalletDto
+    + transactions(userId : long, pageable : Pageable) : PagedModel<TransactionDto>
+  }
+  class ReservationService {
+    + setReservation(req : ReservationRequest) : ReservationDto
+    + release(userId : long, auctionId : long) : void
+  }
+  class SettlementService {
+    + settle(req : SettlementRequest) : SettlementResult
+  }
+}
+
+package "entity" {
+  class User {
+    - id : Long
+    - username : String
+    - email : String
+    - passwordHash : String
+    - displayName : String
+    - role : Role
+    - createdAt : Instant
+  }
+  class Wallet {
+    - id : Long
+    - balance : long
+    - reserved : long
+    - version : long
+    - updatedAt : Instant
+    + available() : long
+  }
+  class WalletReservation {
+    - id : Long
+    - auctionId : Long
+    - amount : long
+    - createdAt : Instant
+    - updatedAt : Instant
+  }
+  class WalletTransaction {
+    - id : Long
+    - type : TransactionType
+    - amount : long
+    - auctionId : Long
+    - createdAt : Instant
+  }
+  class WalletSettlement {
+    - auctionId : Long
+    - winnerId : Long
+    - sellerId : Long
+    - amount : Long
+    - createdAt : Instant
+  }
+  enum Role {
+    USER
+    ADMIN
+  }
+  enum TransactionType {
+    SIGNUP_BONUS
+    TOP_UP
+    PAYMENT
+    PAYOUT
+  }
+}
+
+AuthService ..> JwtService
+AuthService ..> User : creează
+AuthService ..> Wallet : creează (1000 monede)
+UserService ..> User
+WalletService ..> Wallet
+ReservationService ..> WalletReservation
+SettlementService ..> WalletSettlement
+
+User "1" -- "1" Wallet : proprietar
+Wallet "1" *-- "0..*" WalletReservation : rezervări
+Wallet "1" *-- "0..*" WalletTransaction : istoric
+User --> "1" Role
+WalletTransaction --> "1" TransactionType
+@enduml

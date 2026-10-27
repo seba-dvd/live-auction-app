@@ -1,0 +1,77 @@
+@startuml class-bidding-service
+!pragma layout smetana
+!include _style.puml
+hide circle
+hide empty members
+left to right direction
+title bidding-service — diagrama de clase\n<size:11>DRAFT — responsabil: M</size>
+
+package "service" {
+  class BidService {
+    + placeBid(bidderId : long, bidderUsername : String, req : PlaceBidRequest) : BidPlacedResponse
+  }
+  class BidStateInitializer {
+    + ensureExists(auctionId : long) : void
+  }
+  class BidQueryService {
+    + history(auctionId : long, pageable : Pageable) : PagedModel<BidHistoryItem>
+    + mine(bidderId : long, pageable : Pageable) : PagedModel<MyBidItem>
+    + highest(auctionId : long) : Optional<HighestBid>
+  }
+  class BidEventPublisher {
+    + publishAfterCommit(events : List<EventEnvelope>) : void
+  }
+}
+
+package "client" {
+  interface AuctionClient {
+    + getAuction(auctionId : long) : AuctionInfo
+    + bidPlaced(auctionId : long, req : BidPlacedRequest) : BidPlacedResult
+  }
+  interface WalletClient {
+    + setReservation(userId : long, auctionId : long, amount : long) : void
+    + releaseReservation(userId : long, auctionId : long) : void
+  }
+  interface NotificationClient {
+    + publish(event : EventEnvelope) : void
+  }
+  class StubAuctionClient <<profil stub>>
+  class StubWalletClient <<profil stub>>
+  class StubNotificationClient <<profil stub>>
+}
+
+package "entity" {
+  class Bid {
+    - id : Long
+    - auctionId : Long
+    - bidderId : Long
+    - bidderUsername : String
+    - amount : long
+    - createdAt : Instant
+  }
+  class AuctionBidState {
+    - auctionId : Long
+    - highestAmount : Long
+    - highestBidderId : Long
+    - bidCount : int
+    - updatedAt : Instant
+    + minimumNextBid(startingPrice : long, minIncrement : long) : long
+    + recordBid(amount : long, bidderId : long, at : Instant) : void
+  }
+}
+
+BidService ..> BidStateInitializer
+BidService ..> AuctionBidState : lock FOR UPDATE
+BidService ..> Bid : insert
+BidService ..> AuctionClient
+BidService ..> WalletClient
+BidService ..> BidEventPublisher
+BidEventPublisher ..> NotificationClient
+BidQueryService ..> Bid
+
+StubAuctionClient ..|> AuctionClient
+StubWalletClient ..|> WalletClient
+StubNotificationClient ..|> NotificationClient
+
+AuctionBidState "1" .. "0..*" Bid : aceeași licitație\n(auctionId, fără FK)
+@enduml

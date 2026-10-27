@@ -1,0 +1,45 @@
+@startuml deployment
+!pragma layout smetana
+!include _style.puml
+title Diagrama de implementare (deployment)\n<size:11>DRAFT — responsabil: R</size>
+
+node "Calculatorul utilizatorului" <<device>> {
+  artifact "Browser web" as browser
+}
+
+node "Gazdă Docker: laptop (dev) / VM cloud (prod)" <<execution environment>> as host {
+  node "Docker Engine + Docker Compose\nrețea auction-net" as engine {
+    node "frontend\nnginx:1.30-alpine" as n_front
+    node "api-gateway\neclipse-temurin:21-jre" as n_gw
+    node "user-service\neclipse-temurin:21-jre" as n_user
+    node "auction-service\neclipse-temurin:21-jre" as n_auction
+    node "bidding-service\neclipse-temurin:21-jre" as n_bid
+    node "notification-service\neclipse-temurin:21-jre" as n_notif
+    database "mysql:8.4" as n_db
+    storage "volum mysql-data" as v_db
+    storage "volum auction-uploads" as v_up
+  }
+}
+
+cloud "GitHub" {
+  artifact "Repository\nlive-auction-app" as repo
+  node "GitHub Actions\nCI / CD" as gha
+  database "GHCR\nimagini Docker" as ghcr
+}
+
+browser --> n_front : HTTP(S)\n:3000 dev, :80/:443 prod
+n_front --> n_gw : :8080
+n_gw --> n_user : :8081
+n_gw --> n_auction : :8082
+n_gw --> n_bid : :8083
+n_gw --> n_notif : :8084 WebSocket
+n_user --> n_db : :3306
+n_auction --> n_db : :3306
+n_bid --> n_db : :3306
+n_db -- v_db
+n_auction -- v_up
+repo --> gha : push / pull request
+gha --> ghcr : build + push imagini (S3)
+ghcr ..> engine : docker compose pull (S4)
+gha ..> host : deploy prin SSH (S4)
+@enduml

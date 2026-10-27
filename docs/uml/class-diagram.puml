@@ -1,0 +1,114 @@
+@startuml class-diagram
+!pragma layout smetana
+!include _style.puml
+hide circle
+hide empty members
+left to right direction
+title Diagrama de clase — vedere de ansamblu (entități și servicii principale)\n<size:11>DRAFT — asamblează M, cu input de la toți</size>
+
+package "user-service" {
+  class User {
+    - id : Long
+    - username : String
+    - email : String
+    - displayName : String
+    - role : Role
+  }
+  class Wallet {
+    - balance : long
+    - reserved : long
+    + available() : long
+  }
+  class WalletReservation {
+    - auctionId : Long
+    - amount : long
+  }
+  class WalletTransaction {
+    - type : TransactionType
+    - amount : long
+    - auctionId : Long
+  }
+  class WalletSettlement {
+    - auctionId : Long
+    - winnerId : Long
+    - sellerId : Long
+    - amount : Long
+  }
+  class ReservationService {
+    + setReservation(…) : ReservationDto
+    + release(…) : void
+  }
+  class SettlementService {
+    + settle(…) : SettlementResult
+  }
+}
+
+package "auction-service" {
+  class Item {
+    - id : Long
+    - sellerId : Long
+    - title : String
+    - description : String
+  }
+  class ItemPhoto {
+    - filename : String
+    - position : int
+  }
+  class Auction {
+    - id : Long
+    - currentPrice : long
+    - highestBidderId : Long
+    - endTime : Instant
+    - status : AuctionStatus
+    + applyBid(…) : boolean
+  }
+  class BidPlacementService {
+    + bidPlaced(…) : BidPlacedResponse
+  }
+  class AuctionLifecycleJob {
+    + tick() : void
+  }
+}
+
+package "bidding-service" {
+  class Bid {
+    - id : Long
+    - auctionId : Long
+    - bidderId : Long
+    - amount : long
+  }
+  class AuctionBidState {
+    - auctionId : Long
+    - highestAmount : Long
+    - highestBidderId : Long
+    + minimumNextBid(…) : long
+  }
+  class BidService {
+    + placeBid(…) : BidPlacedResponse
+  }
+}
+
+package "notification-service" {
+  class EventEnvelope <<record>> {
+    + type : EventType
+    + auctionId : Long
+    + data : Map<String, Object>
+  }
+  class EventRouter {
+    + route(…) : void
+  }
+}
+
+User "1" -- "1" Wallet
+Wallet "1" *-- "0..*" WalletReservation
+Wallet "1" *-- "0..*" WalletTransaction
+Auction "1" --> "1" Item
+Item "1" *-- "0..5" ItemPhoto
+AuctionBidState "1" .. "0..*" Bid
+
+BidService ..> BidPlacementService : <<REST>>\n/internal/auctions
+BidService ..> ReservationService : <<REST>>\n/internal/wallet/reservations
+AuctionLifecycleJob ..> SettlementService : <<REST>>\n/internal/wallet/settlements
+BidService ..> EventRouter : <<REST>>\n/internal/events
+AuctionLifecycleJob ..> EventRouter : <<REST>>\n/internal/events
+@enduml

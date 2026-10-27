@@ -1,0 +1,56 @@
+@startuml sequence-place-bid
+!include _style.puml
+title Plasarea unei oferte — POST /api/bids\n<size:11>DRAFT — responsabil: M</size>
+autonumber
+actor Licitant as B
+participant "api-gateway" as GW
+participant "bidding-service" as BS
+database "bidding_db" as BDB
+participant "auction-service" as AS
+participant "user-service" as US
+participant "notification-service" as NS
+
+B -> GW : POST /api/bids {auctionId, amount}\nAuthorization: Bearer <jwt>
+GW -> BS : POST /api/bids\nX-User-Id, X-User-Name
+activate BS
+BS -> AS : GET /internal/auctions/{id}
+AS --> BS : {status, sellerId, startingPrice, minIncrement, ...}
+alt status ≠ ACTIVE
+  BS --> GW : 409 AUCTION_NOT_ACTIVE
+else licitantul este vânzătorul
+  BS --> GW : 403 OWN_AUCTION
+end
+BS -> BDB : INSERT IGNORE auction_bid_state\n(tranzacție separată, doar la prima ofertă)
+group o singură metodă @Transactional — lock pe licitație
+  BS -> BDB : SELECT ... FROM auction_bid_state\nWHERE auction_id = ? FOR UPDATE
+  BS -> BS : minim = fără oferte ? startingPrice\n: highestAmount + minIncrement
+  alt amount < minim
+    BS --> GW : 400 BID_TOO_LOW
+  end
+  BS -> US : PUT /internal/wallet/reservations\n{userId, auctionId, amount}
+  alt fonduri insuficiente
+    US --> BS : 409 INSUFFICIENT_FUNDS
+    BS --> GW : 409 INSUFFICIENT_FUNDS
+  end
+  US --> BS : 200
+  BS -> AS : POST /internal/auctions/{id}/bid-placed\n{amount, bidderId, bidAt}
+  alt licitația s-a închis între timp
+    AS --> BS : 409 AUCTION_NOT_ACTIVE
+    BS -> US : compensare: restaurează rezervarea anterioară\nsau DELETE /internal/wallet/reservations
+    BS --> GW : 409 AUCTION_NOT_ACTIVE
+  end
+  AS --> BS : 200 {endTime, extended}
+  opt există un lider anterior, diferit de licitant
+    BS -> US : DELETE /internal/wallet/reservations\n?userId=liderAnterior&auctionId=...
+  end
+  BS -> BDB : INSERT bids\nUPDATE auction_bid_state (lider, sumă, bidCount)
+end
+BS --> GW : 201 {bidId, auctionId, amount, endTime, extended}
+deactivate BS
+GW --> B : 201
+
+== după commit (best effort, erorile doar se loghează) ==
+BS ->> NS : POST /internal/events OUTBID (liderul anterior)
+BS ->> NS : POST /internal/events BID_PLACED
+NS ->> B : /topic/auctions/{id} → BID_PLACED\n(către toți abonații)
+@enduml

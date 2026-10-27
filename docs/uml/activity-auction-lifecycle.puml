@@ -1,0 +1,50 @@
+@startuml activity-auction-lifecycle
+!include _style.puml
+title Ciclul de viață al licitațiilor — job programat\n<size:11>DRAFT — responsabil: K</size>
+start
+:tick @Scheduled(fixedDelay = 1000)
+now = Instant.now(clock);
+partition "1. Pornire" {
+  :caută licitațiile SCHEDULED cu startTime ≤ now;
+  while (mai există licitații?) is (da)
+    :status = ACTIVE;
+    :trimite AUCTION_STARTED
+    pe /topic/auctions/{id};
+  endwhile (nu)
+}
+partition "2. Închidere" {
+  :caută licitațiile ACTIVE cu endTime ≤ now;
+  while (mai există licitații?) is (da)
+    :blochează rândul (FOR UPDATE)
+    și re-verifică endTime ≤ now;
+    if (încă expirată?) then (da)
+      :status = ENDED
+      winnerId = highestBidderId
+      finalPrice = currentPrice (dacă există oferte)
+      settlement_status = PENDING;
+    else (nu)
+      :licitația a fost prelungită
+      (anti-sniping): nu face nimic;
+    endif
+  endwhile (nu)
+}
+partition "3. Decontare" {
+  :caută licitațiile ENDED cu settlement_status = PENDING;
+  while (mai există licitații?) is (da)
+    :POST /internal/wallet/settlements;
+    if (răspuns 200?) then (da)
+      :settlement_status = DONE;
+      :trimite AUCTION_ENDED (topic);
+      if (au existat oferte?) then (da)
+        :trimite AUCTION_WON (câștigător)
+        și AUCTION_SOLD (vânzător);
+      else (nu)
+      endif
+    else (nu)
+      :rămâne PENDING
+      (reîncercare la următorul tick);
+    endif
+  endwhile (nu)
+}
+stop
+@enduml

@@ -1,0 +1,89 @@
+@startuml er-diagram
+!pragma layout smetana
+!include ../uml/_style.puml
+hide circle
+hide empty members
+title Structura bazei de date — vedere de ansamblu (database-per-service)\n<size:11>DRAFT — responsabil: K. Linie continuă = cheie străină; linie punctată = referință logică între scheme (fără FK)</size>
+
+package "user_db (user-service)" {
+  entity "users" as users {
+    * id <<PK>>
+    --
+    username, email, password_hash,
+    display_name, role, created_at
+  }
+  entity "wallets" as wallets {
+    * id <<PK>>
+    --
+    * user_id <<FK>>
+    balance, reserved, version
+  }
+  entity "wallet_reservations" as reservations {
+    * id <<PK>>
+    --
+    * wallet_id <<FK>>
+    auction_id, amount
+  }
+  entity "wallet_transactions" as transactions {
+    * id <<PK>>
+    --
+    * wallet_id <<FK>>
+    type, amount, auction_id
+  }
+  entity "wallet_settlements" as settlements {
+    * auction_id <<PK>>
+    --
+    winner_id <<FK>>, seller_id <<FK>>, amount
+  }
+}
+
+package "auction_db (auction-service)" {
+  entity "items" as items {
+    * id <<PK>>
+    --
+    seller_id, title, description
+  }
+  entity "item_photos" as photos {
+    * id <<PK>>
+    --
+    * item_id <<FK>>
+    filename, position
+  }
+  entity "auctions" as auctions {
+    * id <<PK>>
+    --
+    * item_id <<FK>>
+    seller_id, highest_bidder_id, winner_id,
+    current_price, end_time, status, ...
+  }
+}
+
+package "bidding_db (bidding-service)" {
+  entity "auction_bid_state" as state {
+    * auction_id <<PK>>
+    --
+    highest_amount, highest_bidder_id, bid_count
+  }
+  entity "bids" as bids {
+    * id <<PK>>
+    --
+    auction_id, bidder_id, amount, created_at
+  }
+}
+
+users ||--|| wallets
+wallets ||--o{ reservations
+wallets ||--o{ transactions
+users |o--o{ settlements
+items ||--o{ photos
+items ||--|| auctions
+state ||..o{ bids
+
+auctions }o..|| users : seller_id,\nhighest_bidder_id, winner_id
+items }o..|| users : seller_id
+bids }o..|| auctions : auction_id
+bids }o..|| users : bidder_id
+state |o..|| auctions : auction_id
+reservations }o..|| auctions : auction_id
+settlements |o..|| auctions : auction_id
+@enduml

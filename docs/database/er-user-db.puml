@@ -1,0 +1,67 @@
+@startuml er-user-db
+!pragma layout smetana
+!include ../uml/_style.puml
+hide circle
+hide empty members
+title Schema user_db — diagrama entitate-relație\n<size:11>DRAFT — responsabil: K (cu D). * = NOT NULL</size>
+
+entity "users" as users {
+  * id : BIGINT <<PK>>
+  --
+  * username : VARCHAR(30) <<UQ>>
+  * email : VARCHAR(254) <<UQ>>
+  * password_hash : VARCHAR(100)
+  * display_name : VARCHAR(60)
+  * role : VARCHAR(20)
+  * created_at : DATETIME(6)
+}
+
+entity "wallets" as wallets {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK, UQ>>
+  * balance : BIGINT
+  * reserved : BIGINT
+  * version : BIGINT
+  * updated_at : DATETIME(6)
+  ..
+  CHECK 0 ≤ reserved ≤ balance
+}
+
+entity "wallet_reservations" as reservations {
+  * id : BIGINT <<PK>>
+  --
+  * wallet_id : BIGINT <<FK>>
+  * auction_id : BIGINT <<ref. logică>>
+  * amount : BIGINT
+  * created_at : DATETIME(6)
+  * updated_at : DATETIME(6)
+  ..
+  UQ (wallet_id, auction_id)
+}
+
+entity "wallet_transactions" as transactions {
+  * id : BIGINT <<PK>>
+  --
+  * wallet_id : BIGINT <<FK>>
+  * type : VARCHAR(20)
+  * amount : BIGINT
+  auction_id : BIGINT <<ref. logică>>
+  * created_at : DATETIME(6)
+}
+
+entity "wallet_settlements" as settlements {
+  * auction_id : BIGINT <<PK, ref. logică>>
+  --
+  winner_id : BIGINT <<FK>>
+  * seller_id : BIGINT <<FK>>
+  amount : BIGINT
+  * created_at : DATETIME(6)
+}
+
+users ||--|| wallets : user_id
+wallets ||--o{ reservations : wallet_id
+wallets ||--o{ transactions : wallet_id
+users |o--o{ settlements : winner_id
+users ||--o{ settlements : seller_id
+@enduml

@@ -1,0 +1,40 @@
+@startuml component
+!pragma layout smetana
+!include _style.puml
+title Diagrama de componente — Live Auction App\n<size:11>DRAFT — responsabil: M</size>
+
+node "Browser" {
+  [SPA React\n(Vite, TypeScript)] as SPA
+}
+
+package "Docker Compose — rețeaua auction-net" {
+  [frontend\nnginx (publicat :3000)] as WEB
+  [api-gateway :8080\nSpring Cloud Gateway WebFlux\nvalidare JWT, CORS] as GW
+  [user-service :8081\nautentificare, utilizatori, portofel] as US
+  [auction-service :8082\nlicitații, fotografii, planificator] as AS
+  [bidding-service :8083\noferte, lock per licitație] as BS
+  [notification-service :8084\nSTOMP /ws, broker simplu] as NS
+  database "MySQL 8.4" as DB {
+    [user_db] as UDB
+    [auction_db] as ADB
+    [bidding_db] as BDB
+  }
+  folder "volum auction-uploads" as UP
+}
+
+SPA --> WEB : HTTP /api, WebSocket /ws
+WEB --> GW : proxy /api, /ws
+GW --> US : REST /api/auth, /api/users, /api/wallet
+GW --> AS : REST /api/auctions
+GW --> BS : REST /api/bids
+GW --> NS : WebSocket /ws
+BS --> AS : REST /internal/auctions
+BS --> US : REST /internal/wallet/reservations
+AS --> US : REST /internal/wallet/settlements
+BS ..> NS : REST /internal/events
+AS ..> NS : REST /internal/events
+US --> UDB : JDBC
+AS --> ADB : JDBC
+BS --> BDB : JDBC
+AS --> UP : fișiere imagine
+@enduml

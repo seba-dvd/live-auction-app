@@ -1,0 +1,106 @@
+@startuml class-auction-service
+!pragma layout smetana
+!include _style.puml
+hide circle
+hide empty members
+left to right direction
+title auction-service — diagrama de clase\n<size:11>DRAFT — responsabil: K</size>
+
+package "service" {
+  class AuctionService {
+    + create(sellerId : long, req : CreateAuctionRequest) : AuctionDetails
+    + list(status : AuctionStatus, pageable : Pageable) : PagedModel<AuctionSummary>
+    + details(id : long) : AuctionDetails
+  }
+  class PhotoService {
+    + upload(auctionId : long, sellerId : long, files : List<MultipartFile>) : PhotoUrls
+    + load(filename : String) : Resource
+  }
+  class BidPlacementService {
+    + bidPlaced(auctionId : long, req : BidPlacedRequest) : BidPlacedResponse
+  }
+  class AuctionLifecycleJob {
+    + tick() : void
+    - startDueAuctions(now : Instant) : void
+    - endDueAuctions(now : Instant) : void
+    - retryPendingSettlements() : void
+  }
+}
+
+package "client" {
+  interface WalletClient {
+    + settle(req : SettlementRequest) : SettlementResult
+  }
+  interface NotificationClient {
+    + publish(event : EventEnvelope) : void
+  }
+  class HttpWalletClient
+  class StubWalletClient <<profil stub>>
+  class HttpNotificationClient
+  class StubNotificationClient <<profil stub>>
+}
+
+package "entity" {
+  class Item {
+    - id : Long
+    - sellerId : Long
+    - title : String
+    - description : String
+    - createdAt : Instant
+  }
+  class ItemPhoto {
+    - id : Long
+    - filename : String
+    - position : int
+  }
+  class Auction {
+    - id : Long
+    - sellerId : Long
+    - startingPrice : long
+    - minIncrement : long
+    - currentPrice : long
+    - highestBidderId : Long
+    - bidCount : int
+    - startTime : Instant
+    - endTime : Instant
+    - originalEndTime : Instant
+    - extensionCount : int
+    - status : AuctionStatus
+    - winnerId : Long
+    - finalPrice : Long
+    - settlementStatus : SettlementStatus
+    - version : long
+    - createdAt : Instant
+    + applyBid(amount : long, bidderId : long, bidAt : Instant) : boolean
+    + start() : void
+    + end() : void
+  }
+  enum AuctionStatus {
+    SCHEDULED
+    ACTIVE
+    ENDED
+  }
+  enum SettlementStatus {
+    NONE
+    PENDING
+    DONE
+  }
+}
+
+AuctionLifecycleJob ..> WalletClient
+AuctionLifecycleJob ..> NotificationClient
+AuctionLifecycleJob ..> Auction
+BidPlacementService ..> Auction
+AuctionService ..> Auction
+PhotoService ..> ItemPhoto
+
+HttpWalletClient ..|> WalletClient
+StubWalletClient ..|> WalletClient
+HttpNotificationClient ..|> NotificationClient
+StubNotificationClient ..|> NotificationClient
+
+Auction "1" --> "1" Item : obiect licitat
+Item "1" *-- "0..5" ItemPhoto : fotografii
+Auction --> "1" AuctionStatus
+Auction --> "1" SettlementStatus
+@enduml

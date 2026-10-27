@@ -1,0 +1,38 @@
+@startuml sequence-auction-close
+!include _style.puml
+title Închiderea automată și decontarea unei licitații\n<size:11>DRAFT — responsabil: K</size>
+autonumber
+participant "AuctionLifecycleJob\n@Scheduled(fixedDelay = 1000)" as JOB
+database "auction_db" as ADB
+participant "user-service" as US
+database "user_db" as UDB
+participant "notification-service" as NS
+
+loop la fiecare secundă
+  JOB -> ADB : SELECT id FROM auctions\nWHERE status = 'ACTIVE' AND end_time <= now
+  JOB -> ADB : SELECT ... FOR UPDATE\n(re-verifică end_time <= now)
+  JOB -> ADB : status = ENDED, winner_id = highest_bidder_id,\nfinal_price = current_price, settlement_status = PENDING
+  note right of JOB : commit înainte de apelul HTTP:\nnu ținem lock-ul pe durata decontării
+  JOB -> US : POST /internal/wallet/settlements\n{auctionId, winnerId|null, sellerId, amount|null}
+  activate US
+  US -> UDB : există wallet_settlements(auction_id)?
+  alt deja decontată
+    US --> JOB : 200 {alreadySettled: true}
+  else prima decontare
+    US -> UDB : lock portofele, în ordinea crescătoare a userId
+    US -> UDB : câștigător: balance −= amount, reserved −= amount (PAYMENT)\nvânzător: balance += amount (PAYOUT)\neliberează celelalte rezervări ale licitației
+    US -> UDB : INSERT wallet_settlements
+    US --> JOB : 200 {alreadySettled: false}
+  end
+  deactivate US
+  alt decontare reușită
+    JOB -> ADB : settlement_status = DONE
+    JOB ->> NS : AUCTION_ENDED (topic)
+    opt au existat oferte
+      JOB ->> NS : AUCTION_WON (câștigător)\nAUCTION_SOLD (vânzător)
+    end
+  else timeout sau eroare
+    JOB -> JOB : rămâne PENDING;\nse reîncearcă la următorul tick
+  end
+end
+@enduml

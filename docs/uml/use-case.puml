@@ -1,0 +1,72 @@
+@startuml use-case
+!pragma layout smetana
+!include _style.puml
+title Diagrama cazurilor de utilizare — Live Auction App\n<size:11>DRAFT — responsabil: A</size>
+left to right direction
+
+actor "Vizitator" as Guest
+actor "Utilizator\nautentificat" as User
+actor "Vânzător" as Seller
+actor "Licitant" as Bidder
+actor "Planificator\n(ceasul sistemului)" as Scheduler
+
+Guest <|-- User
+User <|-- Seller
+User <|-- Bidder
+
+rectangle "Live Auction App" {
+  usecase "Înregistrare cont\n(1000 monede bonus)" as UC_Register
+  usecase "Autentificare" as UC_Login
+  usecase "Răsfoire licitații\n(programate, active, încheiate)" as UC_Browse
+  usecase "Vizualizare detalii licitație" as UC_Details
+  usecase "Urmărire licitație live" as UC_Live
+  usecase "Vizualizare istoric oferte" as UC_History
+
+  usecase "Gestionare profil" as UC_Profile
+  usecase "Vizualizare portofel\nși tranzacții" as UC_Wallet
+  usecase "Alimentare portofel (demo)" as UC_TopUp
+
+  usecase "Creare licitație" as UC_Create
+  usecase "Încărcare fotografii" as UC_Photos
+  usecase "Vizualizare licitațiile mele" as UC_Mine
+  usecase "Primire notificare\n„Licitație vândută”" as UC_Sold
+
+  usecase "Plasare ofertă" as UC_Bid
+  usecase "Rezervare fonduri" as UC_Reserve
+  usecase "Prelungire anti-sniping" as UC_Extend
+  usecase "Vizualizare ofertele mele" as UC_MyBids
+  usecase "Primire notificare\n„Ai fost depășit”" as UC_Outbid
+  usecase "Primire notificare\n„Ai câștigat”" as UC_Won
+
+  usecase "Pornire licitație" as UC_Start
+  usecase "Închidere licitație" as UC_Close
+  usecase "Decontare: plată câștigător,\nîncasare vânzător" as UC_Settle
+}
+
+Guest --> UC_Register
+Guest --> UC_Login
+Guest --> UC_Browse
+Guest --> UC_Details
+Guest --> UC_Live
+Guest --> UC_History
+
+User --> UC_Profile
+User --> UC_Wallet
+User --> UC_TopUp
+
+Seller --> UC_Create
+Seller --> UC_Mine
+Seller --> UC_Sold
+UC_Photos ..> UC_Create : <<extend>>
+
+Bidder --> UC_Bid
+Bidder --> UC_MyBids
+Bidder --> UC_Outbid
+Bidder --> UC_Won
+UC_Bid ..> UC_Reserve : <<include>>
+UC_Extend ..> UC_Bid : <<extend>>\n[ofertă în ultimele 30 s]
+
+Scheduler --> UC_Start
+Scheduler --> UC_Close
+UC_Close ..> UC_Settle : <<include>>
+@enduml

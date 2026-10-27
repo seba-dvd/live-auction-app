@@ -1,0 +1,53 @@
+@startuml class-notification-service
+!pragma layout smetana
+!include _style.puml
+hide circle
+hide empty members
+title notification-service — diagrama de clase\n<size:11>DRAFT — responsabil: R. Stereotipul indică pachetul (config, controller, service, dto)</size>
+
+class InternalEventController <<controller>> {
+  + publish(event : EventEnvelope) : ResponseEntity<Void>
+}
+class EventRouter <<service>> {
+  + route(event : EventEnvelope) : void
+  - toTopic(event : EventEnvelope) : void
+  - toUser(event : EventEnvelope) : void
+}
+class EventEnvelope <<dto, record>> {
+  + type : EventType
+  + auctionId : Long
+  + targetUserId : Long
+  + serverTime : Instant
+  + data : Map<String, Object>
+}
+enum EventType {
+  AUCTION_STARTED
+  BID_PLACED
+  OUTBID
+  AUCTION_ENDED
+  AUCTION_WON
+  AUCTION_SOLD
+}
+class WebSocketConfig <<config>> {
+  + registerStompEndpoints(registry : StompEndpointRegistry) : void
+  + configureMessageBroker(registry : MessageBrokerRegistry) : void
+  + configureClientInboundChannel(registration : ChannelRegistration) : void
+}
+class JwtChannelInterceptor <<config>> {
+  + preSend(message : Message<?>, channel : MessageChannel) : Message<?>
+}
+class InternalKeyFilter <<config>> {
+  # doFilterInternal(req, res, chain) : void
+}
+class SimpMessagingTemplate <<Spring>> {
+  + convertAndSend(destination : String, payload : Object) : void
+  + convertAndSendToUser(user : String, destination : String, payload : Object) : void
+}
+
+InternalKeyFilter ..> InternalEventController : protejează /internal/**
+InternalEventController ..> EventRouter
+InternalEventController ..> EventEnvelope
+EventRouter ..> SimpMessagingTemplate : /topic/auctions/{id}\n/user/queue/notifications
+EventEnvelope --> "1" EventType
+WebSocketConfig ..> JwtChannelInterceptor : înregistrează
+@enduml

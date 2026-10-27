@@ -1,0 +1,20 @@
+@startuml state-auction
+!pragma layout smetana
+!include _style.puml
+title Diagrama de stări — Auction.status\n<size:11>DRAFT — responsabil: K</size>
+
+[*] --> SCHEDULED : creare\n[startTime > now]
+[*] --> ACTIVE : creare\n[startTime ≤ now]
+SCHEDULED --> ACTIVE : tick [startTime ≤ now]\n/ AUCTION_STARTED
+ACTIVE --> ACTIVE : bid-placed [bidAt < endTime]\n/ currentPrice, bidCount++;\ndacă endTime − bidAt < 30 s:\nendTime += 30 s
+ACTIVE --> ENDED : tick [endTime ≤ now]\n/ winnerId, finalPrice
+
+state ENDED {
+  [*] --> PENDING
+  PENDING --> PENDING : decontare eșuată\n/ reîncercare la tick
+  PENDING --> DONE : decontare reușită\n/ AUCTION_ENDED,\nAUCTION_WON, AUCTION_SOLD
+  DONE --> [*]
+}
+
+ENDED --> [*]
+@enduml

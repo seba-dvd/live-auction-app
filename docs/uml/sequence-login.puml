@@ -1,0 +1,34 @@
+@startuml sequence-login
+!include _style.puml
+title Autentificare și propagarea identității prin api-gateway\n<size:11>DRAFT — responsabil: D</size>
+autonumber
+actor Utilizator as U
+participant "SPA React" as SPA
+participant "api-gateway" as GW
+participant "user-service" as US
+database "user_db" as DB
+
+U -> SPA : introduce username și parolă
+SPA -> GW : POST /api/auth/login
+note right of GW : rută publică (fără JWT);\nheader-ele X-User-*, X-Internal-Key\nprimite de la client sunt șterse
+GW -> US : POST /api/auth/login
+US -> DB : SELECT users WHERE username = ? OR email = ?
+US -> US : BCrypt.matches(parolă, password_hash)
+alt credențiale valide
+  US -> US : emite JWT HS256\n(sub = userId, username, roles, exp = 60 min)
+  US --> GW : 200 {accessToken, tokenType, expiresIn, user}
+  GW --> SPA : 200
+  SPA -> SPA : păstrează tokenul (AuthContext)
+else credențiale invalide
+  US --> GW : 401 INVALID_CREDENTIALS
+  GW --> SPA : 401
+end
+
+== Cerere autentificată ==
+SPA -> GW : GET /api/wallet\nAuthorization: Bearer <jwt>
+GW -> GW : validează semnătura și exp;\nșterge X-User-Id, X-User-Name, X-Internal-Key;\nadaugă X-User-Id = 7, X-User-Name = ana.pop
+GW -> US : GET /api/wallet\nX-User-Id: 7
+US -> DB : SELECT wallets WHERE user_id = 7
+US --> GW : 200 {balance, reserved, available}
+GW --> SPA : 200
+@enduml

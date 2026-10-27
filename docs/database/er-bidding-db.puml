@@ -1,0 +1,34 @@
+@startuml er-bidding-db
+!pragma layout smetana
+!include ../uml/_style.puml
+hide circle
+hide empty members
+title Schema bidding_db — diagrama entitate-relație\n<size:11>DRAFT — responsabil: K (cu M). * = NOT NULL</size>
+
+entity "auction_bid_state" as state {
+  * auction_id : BIGINT <<PK, ref. logică>>
+  --
+  highest_amount : BIGINT
+  highest_bidder_id : BIGINT <<ref. logică>>
+  * bid_count : INT
+  * updated_at : DATETIME(6)
+  ..
+  rândul blocat cu SELECT ... FOR UPDATE
+}
+
+entity "bids" as bids {
+  * id : BIGINT <<PK>>
+  --
+  * auction_id : BIGINT <<ref. logică>>
+  * bidder_id : BIGINT <<ref. logică>>
+  * bidder_username : VARCHAR(30)
+  * amount : BIGINT
+  * created_at : DATETIME(6)
+  ..
+  UQ (auction_id, amount)
+  INDEX (auction_id, created_at)
+  INDEX (bidder_id, created_at)
+}
+
+state ||..o{ bids : auction_id (fără FK)
+@enduml
