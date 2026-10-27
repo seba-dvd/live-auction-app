@@ -255,6 +255,7 @@ def parse_markdown(text: str) -> list:
 # ----------------------------------------------------------------------------------------------- inline rendering
 RE_INLINE = re.compile(
     r"(?P<code>`[^`]+`)"
+    r"|(?P<autolink><https?://[^>\s]+>)"
     r"|(?P<bold>\*\*(?=\S)(?:[^*]|\*(?!\*))+?\*\*)"
     r"|(?P<link>\[(?P<ltext>[^\]]+)\]\((?P<lurl>[^)\s]+)\))"
     r"|(?P<italic>(?<![\w*])\*(?=\S)[^*\n]+?(?<=\S)\*(?![\w*]))"
@@ -363,6 +364,9 @@ class Builder:
             if m.group("code"):
                 out.append(self.run(m.group("code")[1:-1], bold=bold, italic=italic, code=True,
                                     size=(size - 2 if size else 22)))
+            elif m.group("autolink"):
+                url = m.group("autolink")[1:-1]
+                out.append(self.hyperlink(url, url, bold=bold, italic=italic, size=size))
             elif m.group("bold"):
                 out += self.inline(m.group("bold")[2:-2], bold=True, italic=italic, size=size)
             elif m.group("link"):
@@ -678,7 +682,8 @@ class Builder:
                          '<w:spacing w:after="240"/><w:ind w:right="310" w:firstLine="709"/><w:jc w:val="right"/></w:pPr>'))
         title.append(self.run("Cuprins", bold=True, size=52))
         self.append(title)
-        self.paragraph('<w:pStyle w:val="TOC1"/>', self.field('TOC \\o "1-3" \\h \\z \\u',
+        levels = self.cfg.get("toc_levels", "1-3")
+        self.paragraph('<w:pStyle w:val="TOC1"/>', self.field(f'TOC \\o "{levels}" \\h \\z \\u',
                                                               "Cuprinsul se generează automat (în Word: clic dreapta → Update Field).",
                                                               size=22, dirty=True))
 

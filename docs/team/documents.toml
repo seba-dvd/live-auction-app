@@ -1,0 +1,57 @@
+# Team guides: Word versions in UNITBV template style. Build: bash tools/docgen/build.sh guides
+template = "../templates/unitbv-template.docx"
+team_file = "../../tools/docgen/team.toml"
+repo_root = "../.."
+repo_url = "https://github.com/seba-dvd/live-auction-app/blob/main/"
+doc_type = "GHIDUL MEMBRULUI"
+course = "Proiect de Software pentru Telecomunicații · 2026–2027"
+coordinator_label = "Coordonator:"
+coordinator = "Ș.L. Dr. Ing. Horia MODRAN"
+team_label = "Membru:"
+city_year = "BRAȘOV, 2026"
+header_even = "Echipa Live Auction App"
+front_matter = ["toc"]
+toc_levels = "1-2"
+heading_offset = -1      # "## 1. Pe scurt" becomes a chapter
+skip_first_h1 = true     # the Markdown title is on the cover
+h1_page_break = false
+
+[[documents]]
+output = "docx/Ghid_D.docx"
+title = "D — Project Manager"
+subtitle = "user-service + api-gateway · ramura d/user-gateway"
+header_odd = "Live Auction App — Ghidul lui D"
+team_ids = ["D"]
+chapters = ["D.md"]
+
+[[documents]]
+output = "docx/Ghid_M.docx"
+title = "M — Technical Lead"
+subtitle = "bidding-service, contracte API, arhitectură · ramura m/bidding"
+header_odd = "Live Auction App — Ghidul lui M"
+team_ids = ["M"]
+chapters = ["M.md"]
+
+[[documents]]
+output = "docx/Ghid_K.docx"
+title = "K — Scrum Master"
+subtitle = "auction-service + baza de date · ramura k/auction"
+header_odd = "Live Auction App — Ghidul lui K"
+team_ids = ["K"]
+chapters = ["K.md"]
+
+[[documents]]
+output = "docx/Ghid_A.docx"
+title = "A — Product Owner"
+subtitle = "frontend + backlog · ramura a/frontend"
+header_odd = "Live Auction App — Ghidul lui A"
+team_ids = ["A"]
+chapters = ["A.md"]
+
+[[documents]]
+output = "docx/Ghid_R.docx"
+title = "R — DevOps Engineer"
+subtitle = "notification-service + infrastructură · ramura r/devops"
+header_odd = "Live Auction App — Ghidul lui R"
+team_ids = ["R"]
+chapters = ["R.md"]
