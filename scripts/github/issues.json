@@ -1,0 +1,1495 @@
+[
+  {
+    "title": "[D-S0-01] Invită colegii și finalizează setările GitHub",
+    "body": "- **Ce:**\n  - rulezi `scripts/github/add-members.sh` cu username-urile colegilor;\n  - după ce acceptă invitațiile, rulezi `scripts/github/assign-issues.sh`;\n  - activezi liniile lor din `.github/CODEOWNERS` (prin PR).\n- **Gata când:** toți 5 au acces de scriere, issue-urile sunt atribuite, iar CODEOWNERS cere review-ul corect.\n- **Depinde de:** username-urile colegilor.\n\n---\nResponsabil: **D** · Sprint: **S0** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[D-S0-02] Verifică mediul de lucru al fiecărui membru",
+    "body": "- **Ce:** fiecare rulează `docker compose up -d --build`, deschide `/actuator/health` și Postman „Gateway health”.\n- **Gata când:** toți au confirmat în chat „setup gata”; problemele rămase au issues atribuite lui R.\n- **Depinde de:** D-S0-01.\n\n---\nResponsabil: **D** · Sprint: **S0** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[D-S0-03] Prezintă tema și rolurile la Ședința 3",
+    "body": "- **Ce:** slide-uri cu tema, arhitectura, rolurile și calendarul. Folosește [Carta proiectului](../project-charter/README.md) și diagrama de componente.\n- **Gata când:** prezentarea a avut loc (02/09.11), iar feedback-ul coordonatorului e notat într-un issue.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S0** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[D-S0-04] Înregistrează tema în tabelul coordonatorului",
+    "body": "- **Ce:** treci echipa, tema și rolurile în tabelul partajat de coordonator.\n- **Gata când:** înregistrarea e făcută până la **09.11.2026**, iar captura e pusă în chat.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S0** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[D-S1-01] Entități și repository-uri: users, wallets, wallet_transactions",
+    "body": "- **Ce:** `User`, `Wallet`, `WalletTransaction` (+ enum-urile `Role`, `TransactionType`) mapate pe tabelele din `V1__init.sql`, plus repository-urile Spring Data.\n- **Gata când:** serviciul pornește cu `ddl-auto: validate` pe MySQL din Compose, iar `./mvnw verify` e verde.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-02] Înregistrare cont",
+    "body": "- **Ce:** `POST /api/auth/register`, într-o singură tranzacție:\n  - validare și hash BCrypt;\n  - verificarea unicității username-ului și a emailului;\n  - crearea portofelului cu 1000 de monede și a tranzacției `SIGNUP_BONUS`.\n- **Gata când:** răspunde 201 cu `UserDto` și `Location`, 409 `USERNAME_TAKEN` / `EMAIL_TAKEN` și 400 `VALIDATION_FAILED`; are teste unitare.\n- **Depinde de:** D-S1-01.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-03] Autentificare și emiterea JWT",
+    "body": "- **Ce:** `POST /api/auth/login` acceptă username sau email. Emite un JWT HS256 (§7.3) cu `sub`, `username`, `roles` și `exp` de 60 de minute.\n- **Gata când:** răspunde 200 `{accessToken, tokenType, expiresIn, user}` și 401 `INVALID_CREDENTIALS` (același mesaj pentru ambele cazuri); tokenul se decodează pe <https://jwt.io> cu claims corecte.\n- **Depinde de:** D-S1-02.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-04] Profil și portofel: GET/PUT /api/users/me, GET /api/users/{id}, GET /api/wallet",
+    "body": "- **Ce:** endpoint-urile citesc identitatea din `X-User-Id` și răspund conform [api-contracts §5](../api-contracts.md#5-user-service-api-public).\n- **Gata când:** cererile din Postman trec prin gateway, iar 404 `USER_NOT_FOUND` e tratat.\n- **Depinde de:** D-S1-01.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-05] Gateway: validarea JWT și rutele publice",
+    "body": "- **Ce:**\n  - resource server reactiv cu decodor HS256 (§7.3);\n  - lista de rute publice din [api-contracts §2.3](../api-contracts.md#23-rute-publice-fără-jwt);\n  - 401/403 ca ProblemDetail JSON.\n- **Gata când:**\n  - `GET /api/wallet` fără token dă 401, cu token dă 200;\n  - `GET /api/auctions` merge fără token;\n  - `GET /api/auctions/mine` fără token dă 401.\n- **Depinde de:** D-S1-03.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:gateway",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-06] Gateway: ștergerea și propagarea header-elor; tokenul expirat pe rute publice",
+    "body": "- **Ce:**\n  - un `GlobalFilter` (sau `WebFilter`) șterge `X-User-Id`, `X-User-Name` și `X-Internal-Key` primite de la client;\n  - adaugă `X-User-Id` / `X-User-Name` din JWT;\n  - decide și documentează în ADR-002 ce se întâmplă cu un token expirat pe o rută publică.\n- **Gata când:**\n  - un `X-User-Id` falsificat de client nu ajunge la servicii;\n  - pe rutele publice, cu token expirat, navigarea merge;\n  - ADR-002 are statusul „Acceptat”.\n- **Depinde de:** D-S1-05.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:gateway",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-07] Diagrama de clase pentru user-service",
+    "body": "- **Ce:** actualizezi `docs/uml/class-user-service.puml` după implementarea reală și îi trimiți lui M ce s-a schimbat.\n- **Gata când:** diagrama e regenerată (`bash tools/diagrams/render.sh`) și e inclusă în diagrama de ansamblu.\n- **Depinde de:** D-S1-01.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:uml"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S1-08] Release v0.1.0",
+    "body": "- **Ce:** PR `develop → main` la finalul S1, merge și tag `v0.1.0` cu notele de release.\n- **Gata când:** tag-ul există, iar `main` rulează cu `docker compose up`.\n- **Depinde de:** sprint review S1.\n\n---\nResponsabil: **D** · Sprint: **S1** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[D-S2-01] Rezervări interne: PUT și DELETE /internal/wallet/reservations",
+    "body": "- **Ce:**\n  - entitatea `WalletReservation`;\n  - setarea idempotentă a rezervării: `available + rezervareaCurentă ≥ amount`, altfel 409;\n  - eliberarea idempotentă;\n  - lock `PESSIMISTIC_WRITE` pe portofel.\n- **Gata când:**\n  - rezervarea de 150, apoi 200 pe aceeași licitație dă `reserved = 200` (nu 350);\n  - DELETE de două ori dă 204 de fiecare dată;\n  - există teste unitare.\n- **Depinde de:** D-S1-01.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-02] Decontări idempotente: POST /internal/wallet/settlements",
+    "body": "- **Ce:** decontarea respectă [api-contracts §8.1](../api-contracts.md#81-user-service-responsabil-d):\n  - plata câștigătorului (`PAYMENT`) și încasarea vânzătorului (`PAYOUT`);\n  - eliberarea celorlalte rezervări ale licitației;\n  - rândul `wallet_settlements`;\n  - lock-uri în ordinea crescătoare a userId.\n- **Gata când:**\n  - al doilea apel cu același `auctionId` dă `alreadySettled: true`, fără mișcări de bani;\n  - licitația fără oferte nu mută bani;\n  - există teste unitare.\n- **Depinde de:** D-S2-01.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-03] Filtrul X-Internal-Key",
+    "body": "- **Ce:** un filtru pe `/internal/**` compară header-ul cu `app.internal-api-key`. Dacă diferă, răspunde 401 ProblemDetail `INTERNAL_KEY_INVALID`.\n- **Gata când:** fără header dă 401, cu header corect merge; există un test cu MockMvc.\n- **Depinde de:** D-S2-01.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-04] Istoric tranzacții (paginat) și alimentare demo",
+    "body": "- **Ce:** `GET /api/wallet/transactions` (`PagedModel`, cele mai noi primele) și `POST /api/wallet/top-up` (1–10000, tranzacție `TOP_UP`).\n- **Gata când:** paginarea respectă forma `PagedModel`, iar 0 sau 10001 dă 400.\n- **Depinde de:** D-S1-04.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-05] Teste unitare pentru portofel",
+    "body": "- **Ce:** acoperi cazurile:\n  - fonduri insuficiente;\n  - mărirea propriei oferte (rezervarea se înlocuiește);\n  - eliberare idempotentă;\n  - decontare idempotentă;\n  - licitație fără oferte;\n  - invariantul `0 ≤ reserved ≤ balance`.\n- **Gata când:** toate cazurile au teste verzi în CI.\n- **Depinde de:** D-S2-02.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-06] Raport Tehnic: capitolele 3 și 9, apoi asamblarea",
+    "body": "- **Ce:**\n  - revizuiești `docs/raport-tehnic/src/03-roluri.md` și `09-securitate.md`;\n  - strângi capitolele colegilor până pe 27.11;\n  - regenerezi documentul (`bash tools/docgen/build.sh raport`) și îl predai pe 30.11.\n- **Gata când:** documentul e predat la termen, iar PDF-ul e comis pe `main`.\n- **Depinde de:** capitolele colegilor.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S2-07] Release v0.2.0",
+    "body": "- **Ce:** PR `develop → main`, merge și tag `v0.2.0`.\n- **Gata când:** tag-ul există, iar fluxurile S2 merg pe `main`.\n- **Depinde de:** sprint review S2.\n\n---\nResponsabil: **D** · Sprint: **S2** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[D-S3-01] Test de concurență pentru portofel",
+    "body": "- **Ce:** rezervări paralele pentru același utilizator, la licitații diferite (de exemplu 20 de fire). Suma rezervărilor acceptate nu depășește niciodată soldul. Folosește Testcontainers MySQL.\n- **Gata când:** testul trece de 10 ori la rând, iar invariantul e verificat în baza de date.\n- **Depinde de:** D-S2-01.\n\n---\nResponsabil: **D** · Sprint: **S3** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[D-S3-02] Postman: aserțiuni pentru auth, users și wallet",
+    "body": "- **Ce:** teste în tab-ul „Tests” pentru fiecare cerere a ta: status, câmpuri, coduri de eroare.\n- **Gata când:** folderul rulează verde în Newman (CI-ul lui R).\n- **Depinde de:** R-S2-02.\n\n---\nResponsabil: **D** · Sprint: **S3** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:user",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[D-S3-03] Verificarea CORS și WebSocket prin gateway (cu A și R)",
+    "body": "- **Ce:** front-end-ul pe 5173 și 3000, conexiunea `/ws` prin gateway, coada privată cu JWT.\n- **Gata când:** pagina live merge din ambele origini, fără erori CORS în consolă.\n- **Depinde de:** R-S2-01, A-S3-01.\n\n---\nResponsabil: **D** · Sprint: **S3** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:gateway",
+      "owner:D",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[D-S3-04] Prezentarea stadiului proiectului",
+    "body": "- **Ce:** slide-uri și demo scurt cu fluxurile S2–S3, pregătite cu toată echipa.\n- **Gata când:** prezentarea a avut loc la Ședințele 6–7.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S3** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[D-S3-05] Release v0.3.0",
+    "body": "- **Ce:** PR `develop → main`, merge și tag `v0.3.0` (MVP-ul complet).\n- **Gata când:** scenariul de demo merge pe `main`.\n- **Depinde de:** sprint review S3.\n\n---\nResponsabil: **D** · Sprint: **S3** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[D-S4-01] Revizuirea securității (OWASP Top 10)",
+    "body": "- **Ce:** parcurgi lista OWASP Top 10 pentru aplicație și notezi constatările și corecturile în issues.\n- **Gata când:** fiecare punct are „ok” sau un issue rezolvat; capitolul 9 din Raport e actualizat.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S4** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:gateway",
+      "owner:D",
+      "priority:should",
+      "type:docs"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[D-S4-02] Secretele de producție (cu R)",
+    "body": "- **Ce:** `JWT_SECRET`, `INTERNAL_API_KEY` și parolele MySQL noi, generate aleator, în `.env` pe VM și în GitHub Secrets.\n- **Gata când:** producția nu folosește nicio valoare din `.env.example`.\n- **Depinde de:** R-S3-04.\n\n---\nResponsabil: **D** · Sprint: **S4** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:D",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[D-S4-03] Prezentarea finală și demo-ul",
+    "body": "- **Ce:** conduci prezentarea finală. Scenariul de demo îl pregătește A, cu repetiție completă în cloud.\n- **Gata când:** prezentarea a avut loc, iar release-ul `v1.0.0` e pe `main`.\n- **Depinde de:** A-S4-03.\n\n---\nResponsabil: **D** · Sprint: **S4** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:D",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[D-S4-04] (opțional) Swagger UI agregat în gateway",
+    "body": "- **Ce:** `springdoc-openapi-starter-webflux-ui` în gateway, cu `urls` către `/v3/api-docs` ale serviciilor.\n- **Gata când:** <http://localhost:8080/swagger-ui.html> listează toate serviciile.\n- **Depinde de:** —\n\n---\nResponsabil: **D** · Sprint: **S4** · Ghid: [docs/team/D.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/D.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:gateway",
+      "owner:D",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[M-S0-01] Revizuiește contractele și convențiile cu D",
+    "body": "- **Ce:** citești `api-contracts.md`, `architecture.md`, `CLAUDE.md` și propui corecturi prin PR.\n- **Gata când:** contractele v1 sunt confirmate în „Istoricul versiunilor”, cu tine ca aprobator.\n- **Depinde de:** —\n\n---\nResponsabil: **M** · Sprint: **S0** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[M-S0-02] Prezintă arhitectura echipei (30 min)",
+    "body": "- **Ce:**\n  - componentele;\n  - fluxul de plasare a unei oferte;\n  - regula „banii se mută doar sub lock, notificările după commit”;\n  - profilul `stub`.\n- **Gata când:** prezentarea a avut loc, iar întrebările deschise sunt notate în issues.\n- **Depinde de:** M-S0-01.\n\n---\nResponsabil: **M** · Sprint: **S0** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[M-S1-01] Entități și repository-uri: Bid, AuctionBidState",
+    "body": "- **Ce:** entitățile mapate pe `V1__init.sql`, `BidRepository` (paginare), `AuctionBidStateRepository` cu `findByIdForUpdate` (lock) și `insertIfAbsent` (§7.3).\n- **Gata când:** `MySqlSchemaTests` e verde (Docker), iar serviciul pornește cu `validate`.\n- **Depinde de:** —\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S1-02] Clienții AuctionClient, WalletClient, NotificationClient",
+    "body": "- **Ce:**\n  - interfețe în `client`;\n  - implementări HTTP cu `RestClient` (timeouts 2 s / 5 s, `X-Internal-Key`; §7.3);\n  - implementări `@Profile(\"stub\")` în memorie;\n  - traducerea erorilor: 409 → excepție de domeniu, timeout → 503 `SERVICE_UNAVAILABLE`.\n- **Gata când:** serviciul pornește cu și fără profilul `stub`; există teste pentru traducerea erorilor.\n- **Depinde de:** —\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S1-03] Istoricul ofertelor: GET /api/bids/auction/{auctionId}",
+    "body": "- **Ce:** `PagedModel<BidHistoryItem>`, cele mai noi primele, rută publică.\n- **Gata când:** cererea din Postman trece; paginarea are forma din contract.\n- **Depinde de:** M-S1-01.\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S1-04] Tratarea erorilor (ProblemDetail + code)",
+    "body": "- **Ce:** `@RestControllerAdvice` cu `ApiException(status, code, message)`, `VALIDATION_FAILED` cu `errors[]` și 500 `INTERNAL_ERROR` fără detalii interne.\n- **Gata când:** un test MockMvc verifică formatul pentru 400 și 409.\n- **Depinde de:** —\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S1-05] Diagrama de clase de ansamblu (Ședințele 4–5)",
+    "body": "- **Ce:**\n  - strângi modificările de la D, K și R;\n  - actualizezi `docs/uml/class-diagram.puml` și diagrama bidding;\n  - regenerezi imaginile.\n- **Gata când:** diagramele sunt prezentate la Ședințele 4–5, iar PNG-urile sunt comise.\n- **Depinde de:** D-S1-07, K-S1-02.\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:uml"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S1-06] Îngheață contractele v1",
+    "body": "- **Ce:** ultimele corecturi și intrarea „v1 înghețat” în istoric. De aici, schimbările incompatibile se fac doar cu acordul celor afectați.\n- **Gata când:** PR-ul e integrat pe `develop` până pe 22.11.\n- **Depinde de:** M-S0-01.\n\n---\nResponsabil: **M** · Sprint: **S1** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[M-S2-01] POST /api/bids: fluxul complet",
+    "body": "- **Ce:** pașii 1–6 din [architecture §6.1](../architecture.md#61-plasarea-unei-oferte), într-o singură metodă `@Transactional`:\n  - validare;\n  - `ensureExists` (tranzacție separată) și lock;\n  - suma minimă;\n  - rezervare;\n  - `bid-placed`;\n  - insert și actualizarea stării.\n- **Gata când:** răspunsul e 201 conform contractului, iar erorile sunt `BID_TOO_LOW`, `OWN_AUCTION`, `AUCTION_NOT_ACTIVE`, `INSUFFICIENT_FUNDS`.\n- **Depinde de:** M-S1-01, M-S1-02, D-S2-01, K-S2-03 (sau stub-urile).\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S2-02] Compensarea și eliberarea fostului lider",
+    "body": "- **Ce:**\n  - la 409 de la `bid-placed`: restaurezi rezervarea anterioară (licitantul era deja lider) sau o ștergi;\n  - după succes: `DELETE` pe rezervarea fostului lider, doar dacă e alt utilizator (la eroare doar loghezi).\n- **Gata când:** există teste unitare pentru ambele ramuri de compensare și pentru „același lider își mărește oferta”.\n- **Depinde de:** M-S2-01.\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S2-03] Evenimentele după commit: OUTBID, BID_PLACED",
+    "body": "- **Ce:** `ApplicationEventPublisher` plus `@TransactionalEventListener(AFTER_COMMIT)` (§7.3). Construiești anvelopele din [contracte §9](../api-contracts.md#9-websocket--stomp-și-evenimente).\n- **Gata când:** cu notification-service pornit, `tools/ws-test.html` primește `BID_PLACED`; o tranzacție eșuată nu trimite nimic.\n- **Depinde de:** M-S2-01, R-S1-02.\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S2-04] Teste unitare cu clienții simulați",
+    "body": "- **Ce:** Mockito pe `AuctionClient` / `WalletClient`. Acoperi toate erorile, sumele minime (cu și fără oferte) și compensarea.\n- **Gata când:** cel puțin 10 teste pentru `BidService`, toate verzi în CI.\n- **Depinde de:** M-S2-02.\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S2-05] Finalizează ADR-001 și ADR-003",
+    "body": "- **Ce:** confirmi deciziile (sau le schimbi) pe baza implementării. Statusul devine „Acceptat”.\n- **Gata când:** ambele ADR-uri sunt acceptate și referite în Raport.\n- **Depinde de:** M-S2-01.\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:should",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S2-06] Raport Tehnic: capitolele 4 și 6",
+    "body": "- **Ce:** revizuiești și completezi `04-arhitectura.md` și `06-diagrama-de-clase.md` cu ce s-a implementat.\n- **Gata când:** capitolele sunt pe `develop` până pe 24.11, cu D ca reviewer.\n- **Depinde de:** M-S1-05.\n\n---\nResponsabil: **M** · Sprint: **S2** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[M-S3-01] Test de concurență (Testcontainers MySQL)",
+    "body": "- **Ce:** 50 de oferte paralele la aceeași licitație, cu clienții externi stub care răspund instant. Verifici trei lucruri:\n  - un singur lider;\n  - sumele acceptate strict crescătoare;\n  - `bid_count` egal cu numărul de rânduri din `bids` (fără lost update).\n- **Gata când:** testul trece de 10 ori la rând local și în CI.\n- **Depinde de:** M-S2-01.\n\n---\nResponsabil: **M** · Sprint: **S3** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[M-S3-02] GET /api/bids/mine",
+    "body": "- **Ce:** ofertele apelantului, paginat, cele mai noi primele.\n- **Gata când:** cererea din Postman trece cu JWT; fără JWT, gateway-ul dă 401.\n- **Depinde de:** M-S1-03.\n\n---\nResponsabil: **M** · Sprint: **S3** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[M-S3-03] GET /internal/bids/auction/{auctionId}/highest",
+    "body": "- **Ce:** oferta maximă, sau 204 dacă nu există, cu `X-Internal-Key`.\n- **Gata când:** cererea din folderul „internal” al colecției Postman trece.\n- **Depinde de:** M-S1-01.\n\n---\nResponsabil: **M** · Sprint: **S3** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[M-S3-04] Test end-to-end anti-sniping (cu K)",
+    "body": "- **Ce:** o licitație cu sfârșitul peste 20 s; o ofertă la secunda 15 trebuie să mute sfârșitul cu +30 s, iar evenimentul `BID_PLACED` să aibă `extended: true`.\n- **Gata când:** scenariul e automatizat în Postman sau ca test de integrare.\n- **Depinde de:** K-S2-03.\n\n---\nResponsabil: **M** · Sprint: **S3** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[M-S3-05] Postman: aserțiuni pentru bidding",
+    "body": "- **Ce:** teste pentru toate cererile din folderul „bidding-service”, inclusiv cazurile de eroare.\n- **Gata când:** folderul e verde în Newman (CI).\n- **Depinde de:** R-S2-02.\n\n---\nResponsabil: **M** · Sprint: **S3** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[M-S4-01] (stretch) RabbitMQ pentru evenimente",
+    "body": "- **Ce:** înlocuiești `POST /internal/events` cu publicarea în RabbitMQ (cu R), plus un ADR nou.\n- **Gata când:** evenimentele ajung și dacă notification-service repornește.\n- **Depinde de:** —\n\n---\nResponsabil: **M** · Sprint: **S4** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[M-S4-02] (opțional) Test de încărcare",
+    "body": "- **Ce:** un script k6 sau JMeter cu 100 de utilizatori care licitează la 5 licitații timp de 2 minute.\n- **Gata când:** rezultatele (latență p95, erori) sunt notate în Raport sau în prezentare.\n- **Depinde de:** M-S3-01.\n\n---\nResponsabil: **M** · Sprint: **S4** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:bidding",
+      "owner:M",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[M-S4-03] Partea ta din prezentarea finală: concurență și consistență",
+    "body": "- **Ce:** 3–4 slide-uri: problema, lock-ul, testul cu 50 de oferte, limitările (saga/outbox).\n- **Gata când:** prezentarea e repetată cu echipa.\n- **Depinde de:** M-S3-01.\n\n---\nResponsabil: **M** · Sprint: **S4** · Ghid: [docs/team/M.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/M.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:M",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[K-S0-01] Board-ul GitHub Project și calendarul întâlnirilor",
+    "body": "- **Ce:**\n  - proiectul „Live Auction – Scrum” (coloane Todo / In progress / In review / Done), legat de repository;\n  - adaugi toate issue-urile;\n  - fixezi datele pentru planning și review pentru fiecare sprint.\n- **Gata când:** board-ul arată toate issue-urile S0–S1; calendarul e anunțat în chat.\n- **Depinde de:** D-S0-01 (sau `gh auth refresh -s project` pentru D).\n\n---\nResponsabil: **K** · Sprint: **S0** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[K-S0-02] Regula stand-up-ului asincron",
+    "body": "- **Ce:** mesajul fixat în chat cu formatul „Ieri / Azi / Blocaje”, termenul 22:00 și ce se întâmplă cu blocajele.\n- **Gata când:** toți au postat cel puțin un stand-up în S0.\n- **Depinde de:** —\n\n---\nResponsabil: **K** · Sprint: **S0** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[K-S0-03] Primul sprint planning (S1)",
+    "body": "- **Ce:** obiectivul S1 și issues mutate în milestone-ul S1, cu A pentru priorități.\n- **Gata când:** milestone-ul S1 are toate task-urile asumate, fiecare cu un responsabil.\n- **Depinde de:** K-S0-01.\n\n---\nResponsabil: **K** · Sprint: **S0** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:must",
+      "type:chore"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[K-S1-01] Designul final al bazei de date (toate schemele)",
+    "body": "- **Ce:**\n  - parcurgi `user_db` cu D și `bidding_db` cu M, plus `auction_db`;\n  - corectezi `V1__init.sql`, `docs/database/README.md` și diagramele ER;\n  - opțional, generezi și EER-ul din Workbench (Reverse Engineer).\n- **Gata când:** cele trei `V1__init.sql` rulează în Compose fără erori, iar documentul și diagramele corespund cu SQL-ul.\n- **Depinde de:** —\n\n---\nResponsabil: **K** · Sprint: **S1** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[K-S1-02] Entitățile Item, ItemPhoto, Auction și enum-urile",
+    "body": "- **Ce:** `AuctionStatus` și `SettlementStatus` (`@Enumerated(EnumType.STRING)`), relațiile 1:1 și 1:N din schemă, `@Version` pe `Auction`.\n- **Gata când:** serviciul pornește cu `ddl-auto: validate`, iar `./mvnw verify` e verde.\n- **Depinde de:** K-S1-01.\n\n---\nResponsabil: **K** · Sprint: **S1** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[K-S1-03] POST /api/auctions cu validări",
+    "body": "- **Ce:**\n  - `start < end` și durata între 1 minut și 7 zile, altfel `INVALID_AUCTION_TIMES`;\n  - prețurile ≥ 1;\n  - statusul inițial e `ACTIVE` dacă `startTime ≤ now`;\n  - `currentPrice = startingPrice` și `originalEndTime = endTime`.\n- **Gata când:** răspunde 201 cu `Location`; testele acoperă toate validările.\n- **Depinde de:** K-S1-02.\n\n---\nResponsabil: **K** · Sprint: **S1** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[K-S1-04] GET /api/auctions (filtru, paginare, sortare) și GET /api/auctions/{id}",
+    "body": "- **Ce:** `PagedModel<AuctionSummary>` filtrat după `status` și `AuctionDetails` cu `serverTime`, conform [contracte §6](../api-contracts.md#6-auction-service-api-public).\n- **Gata când:** cererile din Postman trec; 404 `AUCTION_NOT_FOUND` e tratat.\n- **Depinde de:** K-S1-02.\n\n---\nResponsabil: **K** · Sprint: **S1** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[K-S1-05] Finalizează ADR-004 și diagrama de clase auction-service",
+    "body": "- **Ce:** ADR-004 primește statusul „Acceptat”; `docs/uml/class-auction-service.puml` reflectă implementarea; îi trimiți lui M ce s-a schimbat.\n- **Gata când:** diagrama e regenerată și inclusă în ansamblu.\n- **Depinde de:** K-S1-02.\n\n---\nResponsabil: **K** · Sprint: **S1** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:should",
+      "type:uml"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[K-S2-01] Jobul de ciclu de viață: SCHEDULED → ACTIVE → ENDED",
+    "body": "- **Ce:**\n  - `@Scheduled(fixedDelay = 1000)`, cu `Clock` injectat;\n  - pornire la `startTime ≤ now`;\n  - închidere: lock, re-verificare, apoi `ENDED`, `winnerId`, `finalPrice` și `settlement_status = PENDING`.\n- **Gata când:** testele cu `Clock.fixed(...)` verifică ambele tranziții, inclusiv licitația prelungită care **nu** se închide.\n- **Depinde de:** K-S1-02.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S2-02] GET /internal/auctions/{id}",
+    "body": "- **Ce:** endpoint-ul intern pentru bidding-service, protejat cu filtrul `X-Internal-Key` (401 `INTERNAL_KEY_INVALID`).\n- **Gata când:** cererea din folderul „internal” al colecției Postman trece; fără cheie, răspunsul e 401.\n- **Depinde de:** K-S1-04.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S2-03] POST /internal/auctions/{id}/bid-placed: lock și anti-sniping",
+    "body": "- **Ce:**\n  - `PESSIMISTIC_WRITE` pe licitație;\n  - 409 `AUCTION_NOT_ACTIVE` dacă `status ≠ ACTIVE` sau `bidAt ≥ endTime`;\n  - actualizezi `currentPrice`, `highestBidderId` și `bidCount`;\n  - dacă `endTime − bidAt < 30 s`, faci `endTime += 30 s` și `extensionCount++`;\n  - răspunzi `{endTime, extended}`.\n- **Gata când:** testele cu `Clock` fix acoperă: cu prelungire, fără prelungire, după expirare (409), licitație inactivă (409).\n- **Depinde de:** K-S2-02.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S2-04] Încărcarea și servirea fotografiilor",
+    "body": "- **Ce:**\n  - `POST /api/auctions/{id}/photos`: doar vânzătorul; maximum 5 în total; doar jpeg/png/webp (verifică și conținutul, nu doar extensia); maximum 5 MB; nume UUID; salvare în `app.upload-dir`;\n  - `GET /api/auctions/photos/{filename}`, cu `Content-Type` corect.\n- **Gata când:**\n  - erorile `NOT_AUCTION_OWNER`, `TOO_MANY_PHOTOS`, `UNSUPPORTED_PHOTO_TYPE` și `PHOTO_TOO_LARGE` funcționează;\n  - în Docker, fotografiile supraviețuiesc unui `docker compose restart` (volumul `auction-uploads`).\n- **Depinde de:** K-S1-03.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S2-05] Evenimentul AUCTION_STARTED",
+    "body": "- **Ce:** la pornirea unei licitații, trimiți evenimentul prin `NotificationClient`, după commit.\n- **Gata când:** `tools/ws-test.html`, abonat la `/topic/auctions/{id}`, primește evenimentul.\n- **Depinde de:** K-S2-01, R-S1-02.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S2-06] Raport Tehnic: capitolele 2 și 7",
+    "body": "- **Ce:** revizuiești și completezi `02-metodologia.md` și `07-baza-de-date.md` cu deciziile reale.\n- **Gata când:** cap. 2 e pe `develop` până pe 20.11, iar cap. 7 până pe 24.11, cu D ca reviewer.\n- **Depinde de:** K-S1-01.\n\n---\nResponsabil: **K** · Sprint: **S2** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[K-S3-01] Închiderea cu decontare și reîncercarea PENDING",
+    "body": "- **Ce:**\n  - după commit-ul stării `ENDED`, apelezi `POST /internal/wallet/settlements` (`WalletClient`);\n  - la succes: `DONE`;\n  - la eșec: rămâne `PENDING` și se reîncearcă la fiecare tick.\n- **Gata când:** testul cu `WalletClient` care eșuează o dată și apoi reușește ajunge la `DONE` și decontează o singură dată.\n- **Depinde de:** K-S2-01, D-S2-02.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S3-02] Evenimentele AUCTION_ENDED, AUCTION_WON și AUCTION_SOLD",
+    "body": "- **Ce:** după decontarea reușită, `ENDED` pe topic. Dacă au existat oferte, mai trimiți `WON` către câștigător și `SOLD` către vânzător.\n- **Gata când:** în demo-ul cu două browsere, ambii utilizatori primesc notificarea lor.\n- **Depinde de:** K-S3-01, R-S2-01.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S3-03] GET /api/auctions/mine",
+    "body": "- **Ce:** licitațiile apelantului ca vânzător, paginat.\n- **Gata când:** cererea din Postman trece cu JWT, iar gateway-ul o protejează.\n- **Depinde de:** K-S1-04.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S3-04] Teste pentru ciclul de viață și anti-sniping cu `Clock` fix",
+    "body": "- **Ce:** scenarii complete: creare, pornire, oferte, prelungire, închidere și decontare, cu timpul controlat.\n- **Gata când:** cel puțin 8 teste verzi în CI.\n- **Depinde de:** K-S3-01.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S3-05] Diagramele de activitate și de stări (finalizare)",
+    "body": "- **Ce:** actualizezi `activity-auction-lifecycle.puml`, `state-auction.puml` și `sequence-auction-close.puml` după implementare.\n- **Gata când:** diagramele sunt regenerate și corespund codului.\n- **Depinde de:** K-S3-01.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:should",
+      "type:uml"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S3-06] Postman: aserțiuni pentru auctions",
+    "body": "- **Ce:** teste pentru toate cererile din folderul „auction-service” (status, câmpuri, erori).\n- **Gata când:** folderul e verde în Newman (CI).\n- **Depinde de:** R-S2-02.\n\n---\nResponsabil: **K** · Sprint: **S3** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[K-S4-01] (stretch) Anularea unei licitații programate",
+    "body": "- **Ce:** endpoint nou, doar pentru vânzător și doar pentru starea `SCHEDULED` (contract nou aprobat de M).\n- **Gata când:** US-18 e acceptată de A.\n- **Depinde de:** —\n\n---\nResponsabil: **K** · Sprint: **S4** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[K-S4-02] (stretch) Căutare după titlu",
+    "body": "- **Ce:** parametrul `q` la `GET /api/auctions`, fără diferențe între majuscule și minuscule.\n- **Gata când:** US-19 e acceptată de A.\n- **Depinde de:** —\n\n---\nResponsabil: **K** · Sprint: **S4** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:auction",
+      "owner:K",
+      "priority:could",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[K-S4-03] Retrospectiva întregului proiect",
+    "body": "- **Ce:** ce a mers, ce nu și ce am învățat, sub formă de slide-uri pentru prezentarea finală.\n- **Gata când:** slide-urile sunt incluse în prezentare.\n- **Depinde de:** —\n\n---\nResponsabil: **K** · Sprint: **S4** · Ghid: [docs/team/K.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/K.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:K",
+      "priority:should",
+      "type:docs"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[A-S0-01] Rafinează user stories",
+    "body": "- **Ce:** pentru fiecare issue `[US-nn]`, verifici povestea, criteriile de acceptanță și prioritatea MoSCoW. Adaugi ce lipsește și ștergi ce nu se face.\n- **Gata când:** toate poveștile Must au criterii clare, iar backlog-ul e ordonat după prioritate.\n- **Depinde de:** —\n\n---\nResponsabil: **A** · Sprint: **S0** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[A-S0-02] MVP-ul și scenariul de demo (versiunea 1)",
+    "body": "- **Ce:** stabilești cu echipa ce intră în MVP (poveștile Must) și scrii scenariul de demo pas cu pas.\n- **Gata când:** scenariul e în `docs/product/backlog.md` (secțiunea MVP) și echipa e de acord.\n- **Depinde de:** A-S0-01.\n\n---\nResponsabil: **A** · Sprint: **S0** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[A-S1-01] Diagrama use case și descrierile cazurilor (Ședințele 4–5)",
+    "body": "- **Ce:** actualizezi `docs/uml/use-case.puml` (actori, `<<include>>`, `<<extend>>`), regenerezi imaginea și completezi descrierile din Raportul cap. 5.\n- **Gata când:** diagrama e prezentată la Ședințele 4–5, iar PNG-ul e comis.\n- **Depinde de:** —\n\n---\nResponsabil: **A** · Sprint: **S1** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:uml"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[A-S1-02] Structura aplicației: rute, layout, AuthContext",
+    "body": "- **Ce:**\n  - `AuthContext` (token, user, login/logout, persistat în `sessionStorage`);\n  - rute protejate (redirect la `/login`, cu întoarcere după autentificare);\n  - meniul, care arată utilizatorul autentificat.\n- **Gata când:** fără token, `/wallet` duce la `/login`; după login, utilizatorul se întoarce la `/wallet`.\n- **Depinde de:** —\n\n---\nResponsabil: **A** · Sprint: **S1** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[A-S1-03] Clientul API",
+    "body": "- **Ce:** `src/api/client.ts`:\n  - un singur wrapper peste `fetch`;\n  - adaugă `Authorization: Bearer`;\n  - parsează JSON;\n  - transformă erorile ProblemDetail într-un `ApiError` cu `status`, `code` și `detail`;\n  - la 401 face logout și redirecționează.\n- **Gata când:** toate apelurile trec prin wrapper; mesajele de eroare se aleg după `code`.\n- **Depinde de:** A-S1-02.\n\n---\nResponsabil: **A** · Sprint: **S1** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[A-S1-04] Paginile de autentificare și înregistrare",
+    "body": "- **Ce:** formulare cu validare în client (aceleași reguli ca în contract) și apeluri reale prin gateway.\n- **Gata când:** se poate crea un cont și te poți autentifica în aplicație; erorile `USERNAME_TAKEN` și `INVALID_CREDENTIALS` sunt afișate clar.\n- **Depinde de:** A-S1-03, D-S1-03.\n\n---\nResponsabil: **A** · Sprint: **S1** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[A-S1-05] Lista de licitații cu date mock",
+    "body": "- **Ce:** carduri `AuctionSummary` și tab-uri SCHEDULED / ACTIVE / ENDED, cu date mock în forma din contract.\n- **Gata când:** pagina principală arată licitațiile mock, cu paginare simulată.\n- **Depinde de:** A-S1-02.\n\n---\nResponsabil: **A** · Sprint: **S1** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[A-S2-01] Lista reală de licitații (tab-uri și paginare)",
+    "body": "- **Ce:** `GET /api/auctions?status=…&page=…&size=12&sort=…` și paginarea din `page.number` / `page.totalPages`.\n- **Gata când:** US-03 e acceptată (stările de încărcare, listă goală și eroare sunt incluse).\n- **Depinde de:** K-S1-04.\n\n---\nResponsabil: **A** · Sprint: **S2** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[A-S2-02] Pagina de detalii (statică)",
+    "body": "- **Ce:** galeria de fotografii, descrierea, prețurile, istoricul ofertelor (`GET /api/bids/auction/{id}`) și cronometrul calculat cu `serverTime` (§7.3).\n- **Gata când:** US-04 e acceptată.\n- **Depinde de:** K-S1-04, M-S1-03.\n\n---\nResponsabil: **A** · Sprint: **S2** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[A-S2-03] Formularul de creare și încărcarea fotografiilor",
+    "body": "- **Ce:**\n  - formularul, cu validări (start < end, durata maximă 7 zile);\n  - `POST /api/auctions`, apoi `POST /api/auctions/{id}/photos` (`FormData` cu câmpul `files`);\n  - previzualizarea fotografiilor.\n- **Gata când:** US-05 și US-06 sunt acceptate.\n- **Depinde de:** K-S1-03, K-S2-04.\n\n---\nResponsabil: **A** · Sprint: **S2** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[A-S2-04] Pagina portofelului",
+    "body": "- **Ce:** soldul, suma rezervată și suma disponibilă, istoricul paginat și formularul de alimentare.\n- **Gata când:** US-13 și US-14 sunt acceptate.\n- **Depinde de:** D-S2-04.\n\n---\nResponsabil: **A** · Sprint: **S2** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[A-S2-05] Raport Tehnic: capitolele 1 și 5",
+    "body": "- **Ce:** revizuiești `01-descrierea-aplicatiei.md` și `05-cazuri-de-utilizare.md`.\n- **Gata când:** cap. 1 e pe `develop` până pe 20.11, iar cap. 5 până pe 24.11.\n- **Depinde de:** A-S1-01.\n\n---\nResponsabil: **A** · Sprint: **S2** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[A-S3-01] Conexiunea STOMP și abonarea la licitație",
+    "body": "- **Ce:** `src/api/realtime.ts` (§7.3); te abonezi la `/topic/auctions/{id}` pe pagina licitației și te deconectezi la ieșire (cleanup în `useEffect`).\n- **Gata când:** în două browsere, o ofertă apare în celălalt în cel mult 1 secundă.\n- **Depinde de:** R-S1-02, M-S2-03.\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S3-02] Istoric live și cronometru sincronizat",
+    "body": "- **Ce:** `BID_PLACED` actualizează prețul, lista și sfârșitul (inclusiv la prelungire); `AUCTION_ENDED` afișează câștigătorul; offset-ul se recalculează din fiecare `serverTime`.\n- **Gata când:** US-09 și US-11 sunt acceptate, inclusiv testul cu ceasul calculatorului decalat cu 2 minute.\n- **Depinde de:** A-S3-01.\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S3-03] Formularul de ofertă și mesajele după `code`",
+    "body": "- **Ce:** suma minimă sugerată (`currentPrice + minIncrement`, sau `startingPrice` dacă nu există oferte) și mesaje pentru `BID_TOO_LOW`, `OWN_AUCTION`, `AUCTION_NOT_ACTIVE`, `INSUFFICIENT_FUNDS`.\n- **Gata când:** US-07 și US-08 sunt acceptate.\n- **Depinde de:** M-S2-01.\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S3-04] Notificări toast pentru OUTBID, WON și SOLD",
+    "body": "- **Ce:** o conexiune autentificată (JWT în `connectHeaders`) pe toată aplicația, abonată la `/user/queue/notifications`; toast-uri cu link spre licitație.\n- **Gata când:** US-10 și US-16 sunt acceptate.\n- **Depinde de:** R-S2-01, K-S3-02.\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S3-05] Build-ul de producție în Docker (cu R)",
+    "body": "- **Ce:** verifici `frontend/Dockerfile` și `nginx.conf` (fallback SPA, proxy `/api` și `/ws`) pe <http://localhost:3000>.\n- **Gata când:** toate paginile, inclusiv refresh pe `/auctions/5`, merg din containerul nginx.\n- **Depinde de:** —\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S3-06] Scenariul de demo (versiunea finală)",
+    "body": "- **Ce:** pașii exacți, conturile de test și datele inițiale (cu folderul Postman „Demo setup” al lui R).\n- **Gata când:** echipa a rulat scenariul cap-coadă cel puțin o dată.\n- **Depinde de:** R-S3-05.\n\n---\nResponsabil: **A** · Sprint: **S3** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[A-S4-01] Finisare: stări de încărcare, gol și eroare; responsive",
+    "body": "- **Ce:** fiecare pagină are stările de încărcare, listă goală și eroare; layout-ul funcționează pe telefon (360 px).\n- **Gata când:** o verificare completă pe desktop și pe mobil nu găsește pagini „rupte”.\n- **Depinde de:** —\n\n---\nResponsabil: **A** · Sprint: **S4** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:frontend",
+      "owner:A",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[A-S4-02] Testarea de acceptanță a tuturor poveștilor",
+    "body": "- **Ce:** parcurgi criteriile fiecărei povești Must și Should în mediul din cloud și închizi sau redeschizi issues-urile.\n- **Gata când:** toate poveștile Must sunt acceptate.\n- **Depinde de:** R-S4-01.\n\n---\nResponsabil: **A** · Sprint: **S4** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[A-S4-03] Repetiția demo-ului",
+    "body": "- **Ce:** două repetiții complete cu timp măsurat, plus un plan B (video înregistrat) dacă rețeaua cade.\n- **Gata când:** demo-ul încape în timpul alocat, iar video-ul de rezervă există.\n- **Depinde de:** A-S3-06.\n\n---\nResponsabil: **A** · Sprint: **S4** · Ghid: [docs/team/A.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/A.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:A",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[R-S0-01] Stack-ul rulează pe laptopul fiecăruia",
+    "body": "- **Ce:** sesiune de 30 de minute cu fiecare coleg care are probleme: WSL2, memorie (`.wslconfig`), porturi (MySQL local pe 3306 → `MYSQL_HOST_PORT`), CRLF.\n- **Gata când:** toți 5 au `docker compose ps` cu toate containerele „healthy”.\n- **Depinde de:** D-S0-01.\n\n---\nResponsabil: **R** · Sprint: **S0** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[R-S0-02] CI verde pe toate ramurile",
+    "body": "- **Ce:** verifici primul run pe `main`, `develop` și pe ramurile personale și corectezi problemele de workflow.\n- **Gata când:** ultimul run pe fiecare ramură e verde.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S0** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[R-S0-03] Verifică stack-ul complet în Docker",
+    "body": "- **Ce:** rulezi `docker compose up -d --build --wait`, verifici healthcheck-urile 8080–8084 și rulezi `MySqlSchemaTests` (bidding) cu Docker pornit.\n- **Gata când:** toate containerele sunt „healthy”, iar rezultatul e notat în issue.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S0** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S0 Setup"
+  },
+  {
+    "title": "[R-S1-01] POST /internal/events cu X-Internal-Key",
+    "body": "- **Ce:**\n  - controller cu validarea anvelopei (`type` în enum, `auctionId` obligatoriu, `targetUserId` obligatoriu la OUTBID / WON / SOLD);\n  - filtru pentru `X-Internal-Key`;\n  - răspuns 202.\n- **Gata când:** cererea din Postman dă 202; fără cheie dă 401; un corp invalid dă 400 `VALIDATION_FAILED`.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S1** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:notification",
+      "owner:R",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[R-S1-02] Rutarea evenimentelor: topic sau coadă privată",
+    "body": "- **Ce:** `EventRouter` cu `SimpMessagingTemplate`:\n  - evenimentele publice merg la `convertAndSend(\"/topic/auctions/\" + id, envelope)`;\n  - cele private la `convertAndSendToUser(userId, \"/queue/notifications\", envelope)`;\n  - `serverTime` se suprascrie cu ceasul serviciului.\n- **Gata când:** `tools/ws-test.html` primește evenimentul pe topic; un test unitar verifică destinațiile.\n- **Depinde de:** R-S1-01.\n\n---\nResponsabil: **R** · Sprint: **S1** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:notification",
+      "owner:R",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[R-S1-03] `tools/ws-test.html` prin gateway",
+    "body": "- **Ce:** conexiunea `ws://localhost:8080/ws` trece prin gateway până la notification-service, inclusiv cu originile `http://localhost:5173` și `3000`.\n- **Gata când:** pagina se conectează prin gateway și primește evenimente.\n- **Depinde de:** R-S1-02.\n\n---\nResponsabil: **R** · Sprint: **S1** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:notification",
+      "owner:R",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[R-S1-04] Healthcheck-uri și memorie în Compose",
+    "body": "- **Ce:** reglezi `start_period`, `retries` și `mem_limit` după ce măsori consumul real (`docker stats`).\n- **Gata când:** `docker compose up --wait` termină sub 3 minute pe un laptop cu 16 GB.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S1** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:should",
+      "type:infra"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[R-S2-01] JWT pe STOMP CONNECT și cozile private",
+    "body": "- **Ce:** `ChannelInterceptor` (§7.3): numele principalului este userId. Conexiunile anonime pot face SUBSCRIBE doar la `/topic/auctions/**`; refuzi abonarea la `/user/**` fără principal.\n- **Gata când:**\n  - cu JWT valid, `/user/queue/notifications` primește evenimentul privat;\n  - fără JWT, abonarea la coada privată e refuzată;\n  - un JWT invalid refuză conexiunea.\n- **Depinde de:** R-S1-02, D-S1-03.\n\n---\nResponsabil: **R** · Sprint: **S2** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:notification",
+      "owner:R",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[R-S2-02] Colecția Postman finalizată",
+    "body": "- **Ce:** mediile `local` și `cloud`, scriptul de login, exemple de răspuns salvate, ordinea folderelor pentru un run complet. Proprietarii își adaugă aserțiunile în S3.\n- **Gata când:** `newman run` trece cap-coadă pe stack-ul local, cel puțin pentru status-uri.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S2** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:feature"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[R-S2-03] ADR-005: alegerea platformei cloud",
+    "body": "- **Ce:** compari 2–3 opțiuni (de exemplu Azure for Students, oferte din GitHub Student Developer Pack, un VM cu nivel gratuit) după cost, resurse (2 vCPU și 4 GB RAM sau mai mult), acces SSH și IP public.\n- **Gata când:** ADR-005 are statusul „Acceptat”, iar contul e creat.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S2** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[R-S2-04] Raport Tehnic: capitolul 8 și diagrama de deployment",
+    "body": "- **Ce:** revizuiești `08-infrastructura.md` și `docs/uml/deployment.puml` după alegerea platformei cloud.\n- **Gata când:** capitolul e pe `develop` până pe 24.11.\n- **Depinde de:** R-S2-03.\n\n---\nResponsabil: **R** · Sprint: **S2** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:docs",
+      "owner:R",
+      "priority:must",
+      "type:docs"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[R-S3-01] Imaginile Docker în GHCR la push pe main",
+    "body": "- **Ce:** un workflow care construiește cele 6 imagini și le publică ca `ghcr.io/<owner>/live-auction-<serviciu>:<sha>` și `:latest`, cu `permissions: packages: write`.\n- **Gata când:** după un push pe `main`, imaginile apar în pagina Packages a repository-ului.\n- **Depinde de:** —\n\n---\nResponsabil: **R** · Sprint: **S3** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[R-S3-02] Newman în CI, pe stack-ul Compose",
+    "body": "- **Ce:** un job care rulează `docker compose up -d --build --wait`, apoi `newman run` cu mediul local, apoi `docker compose down`. Rulează pe PR-urile spre `develop` și `main`.\n- **Gata când:** job-ul e verde și eșuează la orice aserțiune Postman picată.\n- **Depinde de:** R-S2-02.\n\n---\nResponsabil: **R** · Sprint: **S3** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[R-S3-03] Required status checks",
+    "body": "- **Ce:** în protecția ramurilor `develop` și `main`, verificările CI devin obligatorii, prin `gh api` sau din setări (cu D).\n- **Gata când:** un PR cu CI roșu nu mai poate fi integrat.\n- **Depinde de:** R-S3-02.\n\n---\nResponsabil: **R** · Sprint: **S3** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:should",
+      "type:infra"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[R-S3-04] Prima implementare manuală pe VM",
+    "body": "- **Ce:** VM-ul cu Docker; completezi `docker-compose.prod.yml` (imagini din GHCR, `ports: !reset []` pe gateway, doar front-end-ul publicat) și pui pe VM un `.env` cu secrete noi.\n- **Gata când:** aplicația răspunde la IP-ul public, iar scenariul de demo trece în cloud.\n- **Depinde de:** R-S3-01, R-S2-03.\n\n---\nResponsabil: **R** · Sprint: **S3** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[R-S3-05] Folderul Postman „Demo setup”",
+    "body": "- **Ce:** cereri care creează conturile de demo, alimentează portofelele și creează 2–3 licitații cu sfârșit apropiat.\n- **Gata când:** un singur `newman run --folder \"Demo setup\"` pregătește datele pentru demo.\n- **Depinde de:** R-S2-02.\n\n---\nResponsabil: **R** · Sprint: **S3** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:should",
+      "type:feature"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[R-S4-01] CD la push pe main",
+    "body": "- **Ce:** după publicarea imaginilor, un job face SSH pe VM (cheia în GitHub Secrets) și rulează `docker compose -f docker-compose.yml -f docker-compose.prod.yml pull && … up -d`.\n- **Gata când:** un commit pe `main` ajunge în cloud fără pași manuali.\n- **Depinde de:** R-S3-04.\n\n---\nResponsabil: **R** · Sprint: **S4** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[R-S4-02] Porturile 80/443/22 și HTTPS",
+    "body": "- **Ce:** firewall-ul VM-ului lasă deschise doar aceste porturi. HTTPS se configurează cu Let's Encrypt (nginx sau Caddy), dacă există un domeniu.\n- **Gata când:** porturile 8080–8084 și 3306 nu sunt accesibile din exterior (verificat cu `nmap` sau din browser).\n- **Depinde de:** R-S4-01.\n\n---\nResponsabil: **R** · Sprint: **S4** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:should",
+      "type:infra"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[R-S4-03] Test de verificare (smoke test) după fiecare livrare",
+    "body": "- **Ce:** pasul final din CD: `curl` pe `/actuator/health` și pe pagina principală, cu eșec vizibil dacă nu răspund.\n- **Gata când:** o livrare stricată apare ca job roșu.\n- **Depinde de:** R-S4-01.\n\n---\nResponsabil: **R** · Sprint: **S4** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:should",
+      "type:infra"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[R-S4-04] Mediul final de demo",
+    "body": "- **Ce:** datele de demo pregătite, conturile notate, un backup al bazei de date înainte de prezentare.\n- **Gata când:** repetiția de demo (A-S4-03) merge în cloud.\n- **Depinde de:** R-S3-05.\n\n---\nResponsabil: **R** · Sprint: **S4** · Ghid: [docs/team/R.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/team/R.md#6-plan-pe-sprinturi)",
+    "labels": [
+      "area:devops",
+      "owner:R",
+      "priority:must",
+      "type:infra"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[US-01] Înregistrare cont",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S1 · **Componente:** frontend, user-service\n\n**Ca** vizitator, **vreau** să-mi creez un cont, **pentru ca** să pot vinde și licita.\n\n**Criterii de acceptanță**\n- **Date valide:** **Dat fiind** că username-ul și emailul nu sunt folosite, **când** trimit formularul de înregistrare, **atunci** contul e creat, portofelul primește 1000 de monede (tranzacție `SIGNUP_BONUS`) și sunt dus la autentificare.\n- **Username ocupat:** **Dat fiind** că username-ul există deja, **când** trimit formularul, **atunci** văd mesajul „Username-ul este deja folosit”, iar contul nu se creează.\n- **Date invalide:** **Dat fiind** un username cu spații sau o parolă sub 8 caractere, **când** trimit formularul, **atunci** văd eroarea lângă câmpul greșit.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[US-02] Autentificare",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S1 · **Componente:** frontend, user-service, api-gateway\n\n**Ca** utilizator înregistrat, **vreau** să mă autentific cu username-ul sau emailul, **pentru ca** să pot folosi funcțiile protejate.\n\n**Criterii de acceptanță**\n- **Credențiale corecte:** **Dat fiind** un cont existent, **când** introduc datele corecte, **atunci** sunt autentificat, văd numele meu în meniu și pot deschide pagina Portofel.\n- **Credențiale greșite:** **Dat fiind** o parolă greșită, **când** încerc să mă autentific, **atunci** văd „Date de autentificare incorecte”, fără să aflu dacă username-ul există.\n- **Token expirat:** **Dat fiind** că sesiunea mea a expirat (60 de minute), **când** fac o acțiune protejată, **atunci** sunt trimis la autentificare, iar după login revin la pagina în care eram.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:frontend",
+      "area:gateway",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S1 Design & fundații"
+  },
+  {
+    "title": "[US-03] Răsfoire licitații",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** frontend, auction-service\n\n**Ca** vizitator, **vreau** să văd licitațiile programate, active și încheiate, **pentru ca** să găsesc ce mă interesează.\n\n**Criterii de acceptanță**\n- **Licitații active:** **Dat fiind** că există licitații active, **când** deschid pagina principală, **atunci** văd tab-ul „Active”, cu fotografia principală, titlul, prețul curent, numărul de oferte și timpul rămas.\n- **Paginare:** **Dat fiind** că există peste 12 licitații într-un tab, **când** apăs „Pagina următoare”, **atunci** văd următoarele licitații.\n- **Listă goală:** **Dat fiind** că nu există licitații într-un tab, **când** îl deschid, **atunci** văd un mesaj clar, nu o pagină goală.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-04] Detalii licitație",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** frontend, auction-service, bidding-service\n\n**Ca** vizitator, **vreau** să văd toate detaliile unei licitații, **pentru ca** să decid dacă licitez.\n\n**Criterii de acceptanță**\n- **Detalii:** **Dat fiind** o licitație existentă, **când** o deschid, **atunci** văd fotografiile, descrierea, prețul de pornire, incrementul minim, prețul curent, timpul rămas și istoricul ofertelor (cele mai noi primele).\n- **Licitație inexistentă:** **Dat fiind** un id inexistent, **când** deschid adresa, **atunci** văd „Licitația nu există”.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:bidding",
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-05] Creare licitație",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** frontend, auction-service\n\n**Ca** utilizator autentificat, **vreau** să creez o licitație, **pentru ca** să vând un obiect.\n\n**Criterii de acceptanță**\n- **Date valide:** **Dat fiind** titlu, descriere, preț de pornire, increment, început și sfârșit valide, **când** salvez, **atunci** licitația apare ca „Programată” (sau „Activă” dacă începe acum) și sunt dus la pagina ei.\n- **Interval invalid:** **Dat fiind** că sfârșitul este înaintea începutului sau durata depășește 7 zile, **când** salvez, **atunci** văd eroarea și licitația nu se creează.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-06] Fotografii pentru licitație",
+    "body": "**Prioritate:** Should · **Sprint țintă:** S2 · **Componente:** frontend, auction-service\n\n**Ca** vânzător, **vreau** să adaug până la 5 fotografii, **pentru ca** obiectul să fie atractiv.\n\n**Criterii de acceptanță**\n- **Fotografii valide:** **Dat fiind** fișiere jpeg, png sau webp de maximum 5 MB, **când** le încarc, **atunci** le văd în pagina licitației, iar prima devine fotografia principală.\n- **Fișier respins:** **Dat fiind** un fișier PDF, un fișier mai mare de 5 MB sau a 6-a fotografie, **când** încerc să-l încarc, **atunci** văd motivul refuzului.\n- **Alt utilizator:** **Dat fiind** că nu sunt vânzătorul, **când** încerc să încarc fotografii, **atunci** cererea este refuzată (403).\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "owner:A",
+      "priority:should",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-07] Plasare ofertă",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** frontend, bidding-service, auction-service, user-service\n\n**Ca** licitant, **vreau** să plasez o ofertă, **pentru ca** să câștig obiectul.\n\n**Criterii de acceptanță**\n- **Ofertă validă:** **Dat fiind** o licitație activă și fonduri suficiente, **când** ofer cel puțin minimul sugerat, **atunci** devin lider, iar prețul curent și istoricul se actualizează.\n- **Ofertă prea mică:** **Dat fiind** o sumă sub minim (prețul curent + increment), **când** trimit oferta, **atunci** văd „Oferta minimă este X monede”.\n- **Propria licitație:** **Dat fiind** că sunt vânzătorul, **când** încerc să licitez, **atunci** văd „Nu poți licita la propria licitație”.\n- **Licitație inactivă:** **Dat fiind** o licitație programată sau încheiată, **când** încerc să licitez, **atunci** oferta este refuzată.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:bidding",
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-08] Rezervarea și eliberarea fondurilor",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** user-service, bidding-service, frontend\n\n**Ca** licitant, **vreau** ca banii pentru oferta mea să fie rezervați și eliberați automat când sunt depășit, **pentru ca** să nu pot promite bani pe care nu îi am și să nu-mi rămână blocați.\n\n**Criterii de acceptanță**\n- **Rezervare:** **Dat fiind** 1000 de monede disponibile, **când** ofer 300, **atunci** portofelul arată sold 1000, rezervat 300, disponibil 700.\n- **Eliberare:** **Dat fiind** că am oferta maximă, de 300, **când** alt licitant oferă 320, **atunci** rezervarea mea de 300 se eliberează.\n- **Fonduri insuficiente:** **Dat fiind** 200 de monede disponibile, **când** ofer 300, **atunci** văd „Fonduri insuficiente”, iar oferta nu se plasează.\n- **Propria ofertă mărită:** **Dat fiind** că sunt lider cu 300, **când** ofer 350, **atunci** rezervarea mea devine 350, nu 650.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:bidding",
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-09] Licitație live",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S3 · **Componente:** frontend, notification-service, bidding-service\n\n**Ca** vizitator care urmărește o licitație, **vreau** să văd ofertele noi și cronometrul fără refresh, **pentru ca** să pot reacționa la timp.\n\n**Criterii de acceptanță**\n- **Ofertă nouă:** **Dat fiind** două browsere deschise pe aceeași licitație, **când** în primul se plasează o ofertă, **atunci** în al doilea prețul, istoricul și numărul de oferte se actualizează în cel mult 1 secundă.\n- **Ceas decalat:** **Dat fiind** că ceasul calculatorului meu e decalat cu 2 minute, **când** urmăresc licitația, **atunci** cronometrul arată timpul corect (sincronizat cu `serverTime`).\n- **Încheiere:** **Dat fiind** că licitația se încheie, **când** timpul expiră, **atunci** văd „Licitație încheiată” și câștigătorul, fără refresh.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:bidding",
+      "area:frontend",
+      "area:notification",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-10] Notificare „Ai fost depășit”",
+    "body": "**Prioritate:** Should · **Sprint țintă:** S3 · **Componente:** frontend, notification-service, bidding-service\n\n**Ca** licitant, **vreau** să fiu anunțat când cineva îmi depășește oferta, **pentru ca** să pot licita din nou.\n\n**Criterii de acceptanță**\n- **Depășire:** **Dat fiind** că sunt lider și sunt autentificat în aplicație, **când** alt utilizator oferă mai mult, **atunci** primesc o notificare cu titlul licitației, suma mea și suma nouă, chiar dacă sunt pe altă pagină.\n- **Notificări private:** **Dat fiind** că nu sunt autentificat, **când** urmăresc o licitație, **atunci** nu primesc notificările private ale altora.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:bidding",
+      "area:frontend",
+      "area:notification",
+      "owner:A",
+      "priority:should",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-11] Anti-sniping",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S3 · **Componente:** auction-service, bidding-service, frontend\n\n**Ca** licitant, **vreau** ca o ofertă din ultimele 30 de secunde să prelungească licitația, **pentru ca** să am timp să răspund.\n\n**Criterii de acceptanță**\n- **Prelungire:** **Dat fiind** că mai sunt 10 secunde, **când** cineva plasează o ofertă validă, **atunci** sfârșitul se mută cu 30 de secunde mai târziu și toți văd noul cronometru.\n- **Fără prelungire:** **Dat fiind** că mai sunt 5 minute, **când** cineva licitează, **atunci** sfârșitul rămâne neschimbat.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:bidding",
+      "area:frontend",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-12] Închidere automată și decontare",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S3 · **Componente:** auction-service, user-service, notification-service\n\n**Ca** vânzător, **vreau** ca licitația să se încheie automat și să primesc banii, **pentru ca** tranzacția să fie corectă fără intervenție manuală.\n\n**Criterii de acceptanță**\n- **Cu oferte:** **Dat fiind** o licitație activă cu oferte, **când** expiră timpul, **atunci**:\n  - starea devine „Încheiată”;\n  - câștigătorului i se scade suma (tranzacție `PAYMENT`);\n  - vânzătorul primește suma (tranzacție `PAYOUT`);\n  - toate celelalte rezervări ale licitației se eliberează.\n- **Fără oferte:** **Dat fiind** o licitație fără oferte, **când** expiră timpul, **atunci** se încheie fără câștigător și fără mișcări de bani.\n- **Repornire:** **Dat fiind** că user-service era oprit la închidere, **când** repornește, **atunci** decontarea se face o singură dată, automat.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:notification",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-13] Portofel",
+    "body": "**Prioritate:** Must · **Sprint țintă:** S2 · **Componente:** frontend, user-service\n\n**Ca** utilizator autentificat, **vreau** să-mi văd soldul și istoricul tranzacțiilor, **pentru ca** să știu câți bani am disponibili.\n\n**Criterii de acceptanță**\n- **Sold:** **Dat fiind** un portofel cu rezervări, **când** deschid pagina Portofel, **atunci** văd soldul, suma rezervată și suma disponibilă.\n- **Istoric:** **Dat fiind** mai multe tranzacții, **când** derulez istoricul, **atunci** le văd paginat, cele mai noi primele, cu tipul, suma, licitația și data.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:must",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-14] Alimentare demo",
+    "body": "**Prioritate:** Should · **Sprint țintă:** S2 · **Componente:** frontend, user-service\n\n**Ca** utilizator, **vreau** să-mi alimentez portofelul cu monede demo, **pentru ca** să pot continua să testez aplicația.\n\n**Criterii de acceptanță**\n- **Sumă validă:** **Dat fiind** o sumă între 1 și 10000, **când** confirm alimentarea, **atunci** soldul crește și apare o tranzacție `TOP_UP`.\n- **Sumă invalidă:** **Dat fiind** o sumă de 0 sau peste 10000, **când** confirm, **atunci** văd eroarea.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:should",
+      "type:story"
+    ],
+    "milestone": "S2 Fluxuri de bază"
+  },
+  {
+    "title": "[US-15] Licitațiile și ofertele mele",
+    "body": "**Prioritate:** Should · **Sprint țintă:** S3 · **Componente:** frontend, auction-service, bidding-service\n\n**Ca** utilizator autentificat, **vreau** să văd licitațiile create de mine și ofertele mele, **pentru ca** să le urmăresc ușor.\n\n**Criterii de acceptanță**\n- **Licitațiile mele:** **Dat fiind** că am creat licitații, **când** deschid „Licitațiile mele”, **atunci** le văd pe toate, cu starea lor.\n- **Ofertele mele:** **Dat fiind** că am licitat, **când** deschid „Ofertele mele”, **atunci** văd ofertele, cu suma și licitația.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:bidding",
+      "area:frontend",
+      "owner:A",
+      "priority:should",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-16] Notificări de câștig și de vânzare",
+    "body": "**Prioritate:** Should · **Sprint țintă:** S3 · **Componente:** frontend, notification-service, auction-service\n\n**Ca** câștigător sau vânzător, **vreau** să fiu anunțat la încheierea licitației, **pentru ca** să știu rezultatul imediat.\n\n**Criterii de acceptanță**\n- **Câștigător:** **Dat fiind** că am oferta maximă la final, **când** licitația se încheie, **atunci** primesc „Ai câștigat <titlu> cu X monede”.\n- **Vânzător:** **Dat fiind** că sunt vânzătorul, **când** licitația se încheie cu oferte, **atunci** primesc „<titlu> s-a vândut cu X monede”.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "area:notification",
+      "owner:A",
+      "priority:should",
+      "type:story"
+    ],
+    "milestone": "S3 Timp real & integrare"
+  },
+  {
+    "title": "[US-17] Editare profil",
+    "body": "**Prioritate:** Could · **Sprint țintă:** S4 · **Componente:** frontend, user-service\n\n**Ca** utilizator, **vreau** să-mi schimb numele afișat și emailul, **pentru ca** datele mele să fie corecte.\n\n**Criterii de acceptanță**\n- **Date valide:** **Dat fiind** date valide, **când** salvez profilul, **atunci** noile date apar în meniu și în profilul public.\n- **Email ocupat:** **Dat fiind** un email folosit de alt cont, **când** salvez, **atunci** văd „Emailul este deja folosit”.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:frontend",
+      "area:user",
+      "owner:A",
+      "priority:could",
+      "type:story"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[US-18] Anularea unei licitații programate",
+    "body": "**Prioritate:** Could · **Sprint țintă:** S4 · **Componente:** frontend, auction-service\n\n**Ca** vânzător, **vreau** să anulez o licitație care nu a început, **pentru ca** să corectez o greșeală.\n\n**Criterii de acceptanță**\n- **Licitație programată:** **Dat fiind** o licitație programată, **când** o anulez, **atunci** dispare din liste.\n- **Licitație începută:** **Dat fiind** o licitație activă, **când** încerc să o anulez, **atunci** operația este refuzată.\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "owner:A",
+      "priority:could",
+      "type:story"
+    ],
+    "milestone": "S4 Cloud & final"
+  },
+  {
+    "title": "[US-19] Căutare după titlu",
+    "body": "**Prioritate:** Could · **Sprint țintă:** S4 · **Componente:** frontend, auction-service\n\n**Ca** vizitator, **vreau** să caut licitații după titlu, **pentru ca** să găsesc rapid un obiect.\n\n**Criterii de acceptanță**\n- **Rezultate:** **Dat fiind** licitații cu „camera” în titlu, **când** caut „camera”, **atunci** le văd doar pe acestea (fără diferențe între majuscule și minuscule).\n\n---\nProduct Owner: **A** · Backlog: [docs/product/backlog.md](https://github.com/seba-dvd/live-auction-app/blob/main/docs/product/backlog.md)",
+    "labels": [
+      "area:auction",
+      "area:frontend",
+      "owner:A",
+      "priority:could",
+      "type:story"
+    ],
+    "milestone": "S4 Cloud & final"
+  }
+]
