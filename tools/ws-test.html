@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  STOMP/WebSocket test page for the notification-service (owner: R).
+  Serve it over http so the browser sends an allowed Origin (file:// sends "null", which is rejected):
+      python -m http.server 5500 --directory tools      or      npx --yes http-server tools -p 5500
+  then open http://localhost:5500/ws-test.html
+  Send test events with Postman: "internal API (direct ports)" -> "[notification] Publish event".
+-->
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Auction: test WebSocket / STOMP</title>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.5.0/bundles/stomp.umd.min.js"></script>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; color: #1d2433; }
+      fieldset { border: 1px solid #c8d0e0; border-radius: 8px; margin-bottom: 1rem; }
+      label { display: block; margin: 0.4rem 0; }
+      input { width: 32rem; max-width: 100%; padding: 0.3rem; font-family: monospace; }
+      button { margin-right: 0.5rem; padding: 0.4rem 0.9rem; }
+      #status { font-weight: 600; }
+      #log { background: #0f172a; color: #d1e7ff; padding: 1rem; height: 24rem; overflow: auto; white-space: pre-wrap; font-size: 0.85rem; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>Test WebSocket / STOMP</h1>
+    <p>Stare: <span id="status">deconectat</span></p>
+
+    <fieldset>
+      <legend>Conexiune</legend>
+      <label>URL broker <input id="url" value="ws://localhost:8080/ws" /></label>
+      <label>JWT (opțional, pentru coada privată) <input id="jwt" placeholder="eyJhbGciOi..." /></label>
+      <button id="connect">Conectare</button>
+      <button id="disconnect" disabled>Deconectare</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Abonări</legend>
+      <label>ID licitație <input id="auctionId" value="1" /></label>
+      <button id="subTopic" disabled>Abonare /topic/auctions/{id}</button>
+      <button id="subQueue" disabled>Abonare /user/queue/notifications</button>
+      <button id="clear">Golește log-ul</button>
+    </fieldset>
+
+    <div id="log"></div>
+
+    <script>
+      const $ = (id) => document.getElementById(id)
+      let client = null
+
+      function log(line) {
+        const time = new Date().toISOString().substring(11, 23)
+        $('log').textContent += `[${time}] ${line}\n`
+        $('log').scrollTop = $('log').scrollHeight
+      }
+
+      function setConnected(connected) {
+        $('status').textContent = connected ? 'conectat' : 'deconectat'
+        $('connect').disabled = connected
+        $('disconnect').disabled = !connected
+        $('subTopic').disabled = !connected
+        $('subQueue').disabled = !connected
+      }
+
+      function subscribe(destination) {
+        client.subscribe(destination, (message) => {
+          let body = message.body
+          try { body = JSON.stringify(JSON.parse(message.body), null, 2) } catch (e) { /* not JSON */ }
+          log(`MESSAGE ${destination}\n${body}`)
+        })
+        log(`SUBSCRIBE ${destination}`)
+      }
+
+      $('connect').onclick = () => {
+        const jwt = $('jwt').value.trim()
+        client = new StompJs.Client({
+          brokerURL: $('url').value.trim(),
+          connectHeaders: jwt ? { Authorization: `Bearer ${jwt}` } : {},
+          reconnectDelay: 0,
+          debug: () => {},
+        })
+        client.onConnect = (frame) => { setConnected(true); log(`CONNECTED ${JSON.stringify(frame.headers)}`) }
+        client.onStompError = (frame) => log(`STOMP ERROR ${frame.headers.message || ''} ${frame.body || ''}`)
+        client.onWebSocketClose = (event) => { setConnected(false); log(`WebSocket închis (code ${event.code})`) }
+        client.onWebSocketError = () => log('Eroare WebSocket: verifică URL-ul, gateway-ul și originea paginii')
+        client.activate()
+        log(`Conectare la ${$('url').value.trim()} ${jwt ? 'cu JWT' : 'anonim'}...`)
+      }
+
+      $('disconnect').onclick = () => client && client.deactivate()
+      $('subTopic').onclick = () => subscribe(`/topic/auctions/${$('auctionId').value.trim()}`)
+      $('subQueue').onclick = () => subscribe('/user/queue/notifications')
+      $('clear').onclick = () => { $('log').textContent = '' }
+    </script>
+  </body>
+</html>

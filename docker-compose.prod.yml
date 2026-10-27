@@ -1,0 +1,14 @@
+# Production overrides: placeholder, owned by R (S3: first manual deploy, S4: CD). See docs/team/R.md.
+#
+# Usage on the cloud VM (never load docker-compose.override.yml there):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# TODO(R):
+#  - for every service replace "build:" with "image: ghcr.io/<owner>/live-auction-<service>:<tag>" (pushed by CI on main)
+#  - publish nothing except the front-end: "ports: !reset []" on api-gateway, front-end on 80 (and 443 with HTTPS)
+#  - real secrets only in the VM's .env (never committed), different from .env.example
+#  - restart: always, log rotation (logging: driver json-file, options max-size: 10m, max-file: 3)
+#  - CORS_ALLOWED_ORIGINS / WS_ALLOWED_ORIGIN_PATTERNS = the public URL of the app
+#  - HTTPS (certificate on nginx or a reverse proxy such as Caddy) if a domain is available
+services: {}
