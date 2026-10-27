@@ -2,6 +2,8 @@
 .SYNOPSIS
   Opens each .docx in Microsoft Word, refreshes every field (table of contents, lists of figures / tables / code,
   caption numbers), saves the document and exports a PDF next to it. Needs Microsoft Word on Windows.
+  Word automation sometimes fails on its first start ("RPC server is unavailable"): each document is retried
+  once with a fresh Word instance.
 .EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File tools/docgen/update_fields.ps1 docs/raport-tehnic/Raport_Tehnic_Proiectare.docx
 #>
@@ -11,12 +13,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$word = New-Object -ComObject Word.Application
-$word.Visible = $false
-$word.DisplayAlerts = 0   # wdAlertsNone
-try {
-    foreach ($path in $Paths) {
-        $full = (Resolve-Path -LiteralPath $path).Path
+
+function Update-Document([string] $full) {
+    $word = New-Object -ComObject Word.Application
+    $word.Visible = $false
+    $word.DisplayAlerts = 0   # wdAlertsNone
+    try {
         $doc = $word.Documents.Open($full, $false, $false, $false)
         try {
             $null = $doc.Fields.Update()
@@ -35,8 +37,20 @@ try {
             $doc.Close()
         }
     }
+    finally {
+        try { $word.Quit() } catch { }
+        [System.Runtime.InteropServices.Marshal]::ReleaseComObject($word) | Out-Null
+    }
 }
-finally {
-    $word.Quit()
-    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($word) | Out-Null
+
+foreach ($path in $Paths) {
+    $full = (Resolve-Path -LiteralPath $path).Path
+    try {
+        Update-Document $full
+    }
+    catch {
+        Write-Output "Word automation failed ($($_.Exception.Message)); retrying once..."
+        Start-Sleep -Seconds 3
+        Update-Document $full
+    }
 }

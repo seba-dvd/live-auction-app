@@ -106,6 +106,11 @@ class PageBreak:
     pass
 
 
+@dataclass
+class Landscape:
+    start: bool   # <!-- landscape-start --> ... <!-- landscape-end -->: everything in between on landscape pages
+
+
 RE_FENCE = re.compile(r"^\s*```")
 RE_HEADING = re.compile(r"^(#{1,6})\s+(.*?)\s*(\{-\}|\{\.unnumbered\})?\s*$")
 RE_IMAGE = re.compile(r"^!\[(.*?)\]\((.+?)\)\s*(\{landscape\})?\s*$")
@@ -162,6 +167,10 @@ def parse_markdown(text: str) -> list:
         if stripped.startswith("<!--"):
             if "pagebreak" in stripped:
                 blocks.append(PageBreak())
+            elif "landscape-start" in stripped:
+                blocks.append(Landscape(True))
+            elif "landscape-end" in stripped:
+                blocks.append(Landscape(False))
             while i < n and "-->" not in lines[i]:
                 i += 1
             i += 1
@@ -267,7 +276,7 @@ class Builder:
         self.numbering = self.doc.part.numbering_part.element
         self.ordered_abstract_id = self._add_ordered_abstract()
         self.next_num_id = max(int(n.get(w("w:numId"))) for n in self.numbering.findall(w("w:num"))) + 1
-        self.bookmark_id = 1000
+        self.in_landscape = False
 
     # ---------- low level helpers
     def append(self, element):
@@ -501,18 +510,21 @@ class Builder:
         path = (self.current_md.parent / block.path).resolve()
         if not path.exists():
             raise FileNotFoundError(f"{self.current_md}: image not found: {block.path}")
-        if block.landscape:
+        own_section = block.landscape and not self.in_landscape
+        if own_section:
             self.section_break(landscape=False)
         info = DocxImage.from_file(str(path))
         natural_w = info.px_width / (info.horz_dpi or 96) * 914400
         natural_h = info.px_height / (info.vert_dpi or 96) * 914400
-        max_w, max_h = MAX_IMG[block.landscape]
+        max_w, max_h = MAX_IMG[block.landscape or self.in_landscape]
+        if self.in_landscape:
+            max_h = min(max_h, 11.5 * EMU_PER_CM)   # leave room for the subsection heading and text
         scale = min(1.0, max_w / natural_w, max_h / natural_h)
         para = self.doc.add_paragraph()   # inserted before the final sectPr
         para._p.insert(0, xml(f"<w:pPr>{self.PPR_FIGURE}</w:pPr>"))
         para.add_run().add_picture(str(path), width=Emu(int(natural_w * scale)), height=Emu(int(natural_h * scale)))
         self.caption("Figura", block.caption, self.PPR_CAPTION)
-        if block.landscape:
+        if own_section:
             self.section_break(landscape=True)
 
     @staticmethod
@@ -640,6 +652,13 @@ class Builder:
                 self.quote(b)
             elif isinstance(b, PageBreak):
                 self.page_break()
+            elif isinstance(b, Landscape):
+                if b.start and not self.in_landscape:
+                    self.section_break(landscape=False)    # ends the portrait section before the region
+                    self.in_landscape = True
+                elif not b.start and self.in_landscape:
+                    self.section_break(landscape=True)     # ends the landscape region
+                    self.in_landscape = False
 
     def count_captions(self, files: list[pathlib.Path]) -> dict:
         counts = {"Figura": 0, "Tabelul": 0, "Codul": 0}

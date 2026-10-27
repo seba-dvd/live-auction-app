@@ -1,0 +1,33 @@
+# Raport Tehnic: Proiectare: Word in UNITBV template style. Build: bash tools/docgen/build.sh raport
+template = "../templates/unitbv-template.docx"
+output = "Raport_Tehnic_Proiectare.docx"
+team_file = "../../tools/docgen/team.toml"
+repo_root = "../.."
+repo_url = "https://github.com/seba-dvd/live-auction-app/blob/main/"
+
+doc_type = "RAPORT TEHNIC: PROIECTARE"
+title = "Live Auction App"
+subtitle = "Platformă de licitații live cu monede virtuale"
+course = "Proiect de Software pentru Telecomunicații · 2026–2027"
+coordinator_label = "Coordonator:"
+coordinator = "Ș.L. Dr. Ing. Horia MODRAN"
+team_label = "Echipa:"
+city_year = "BRAȘOV, 2026"
+header_odd = "Live Auction App — Raport Tehnic: Proiectare"
+header_even = "Echipa Live Auction App"
+
+front_matter = ["toc", "lists", "acronyms"]
+acronyms = "src/00-acronime.md"
+chapters = [
+  "src/01-descrierea-aplicatiei.md",
+  "src/02-metodologia.md",
+  "src/03-roluri.md",
+  "src/04-arhitectura.md",
+  "src/05-cazuri-de-utilizare.md",
+  "src/06-diagrama-de-clase.md",
+  "src/07-baza-de-date.md",
+  "src/08-infrastructura.md",
+  "src/09-securitate.md",
+  "src/10-plan-si-concluzii.md",
+]
+back_matter = ["src/90-bibliografie.md", "src/95-rezumat.md", "src/96-abstract.md"]

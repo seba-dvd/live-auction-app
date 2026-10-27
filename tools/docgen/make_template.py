@@ -165,6 +165,12 @@ def main(src: str, dst: str) -> None:
     set_style_fonts(styles, "Normal", "UT Sans", lang="ro-RO")
     for toc in ("TOC1", "TOC2", "TOC3"):
         set_style_fonts(styles, toc, "UT Sans", size_half_points=22)
+    # TOC level 2: wider number tab so that "10.1" does not touch the title
+    toc2 = styles.find(f"{{{W}}}style[@{{{W}}}styleId='TOC2']")
+    if toc2 is not None:
+        for tab in toc2.iter(qn("w:tab")):
+            if tab.get(qn("w:val")) == "left":
+                tab.set(qn("w:pos"), "993")
     if styles.find(f"{{{W}}}style[@{{{W}}}styleId='TableofFigures']") is None:
         styles.append(etree.fromstring(
             f'<w:style xmlns:w="{W}" w:type="paragraph" w:styleId="TableofFigures">'
