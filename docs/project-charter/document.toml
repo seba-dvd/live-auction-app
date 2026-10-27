@@ -1,0 +1,26 @@
+# Carta proiectului: Word in UNITBV template style. Build: bash tools/docgen/build.sh charter
+template = "../templates/unitbv-template.docx"
+output = "Carta_Proiectului.docx"
+team_file = "../../tools/docgen/team.toml"
+repo_root = "../.."
+repo_url = "https://github.com/seba-dvd/live-auction-app/blob/main/"
+
+doc_type = "CARTA PROIECTULUI"
+title = "Live Auction App"
+subtitle = "Platformă de licitații live cu monede virtuale"
+course = "Proiect de Software pentru Telecomunicații · 2026–2027"
+coordinator_label = "Coordonator:"
+coordinator = "Ș.L. Dr. Ing. Horia MODRAN"
+team_label = "Echipa:"
+city_year = "BRAȘOV, 2026"
+header_odd = "Live Auction App — Carta proiectului"
+header_even = "Echipa Live Auction App"
+
+front_matter = ["toc", "lists"]
+chapters = [
+  "src/01-prezentare.md",
+  "src/02-domeniu.md",
+  "src/03-organizare.md",
+  "src/04-resurse-si-riscuri.md",
+  "src/05-succes-si-aprobare.md",
+]

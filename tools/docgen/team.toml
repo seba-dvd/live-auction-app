@@ -1,0 +1,28 @@
+# Team shown on the Word covers (charter, technical report, guides).
+# Leave name = "" until the member joins: the cover then shows only the ID (e.g. "M — Technical Lead").
+# After editing, rebuild the documents: bash tools/docgen/build.sh
+
+[[member]]
+id = "D"
+name = "Pilat David Sebastian"
+role = "Project Manager"
+
+[[member]]
+id = "M"
+name = ""
+role = "Technical Lead"
+
+[[member]]
+id = "K"
+name = ""
+role = "Scrum Master"
+
+[[member]]
+id = "A"
+name = ""
+role = "Product Owner"
+
+[[member]]
+id = "R"
+name = ""
+role = "DevOps Engineer"
