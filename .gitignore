@@ -1,0 +1,51 @@
+# ---------- Secrets / local env ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Bootstrap log (local only) ----------
+BOOTSTRAP_REPORT.md
+
+# ---------- Maven / Java ----------
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+hs_err_pid*
+replay_pid*
+
+# ---------- Node / front-end ----------
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+coverage/
+
+# ---------- Runtime data ----------
+uploads/
+logs/
+*.log
+npm-debug.log*
+
+# ---------- Doc / diagram tooling ----------
+tools/docgen/.venv/
+tools/diagrams/*.jar
+__pycache__/
+*.pyc
+~$*.docx
+
+# ---------- IDEs / OS ----------
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/*
+!.vscode/extensions.json
+.classpath
+.project
+.settings/
+.factorypath
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,39 @@
+# Code owners: reviews are requested automatically.
+# Do NOT enable "Require review from Code Owners" in branch protection (single owners would block their own PRs).
+# The last matching pattern wins.
+#
+# TODO(D): after M, K, A, R accept the repository invitation, replace <M>, <K>, <A>, <R> with their
+# GitHub usernames and uncomment their lines (scripts/github/add-members.sh prints the exact lines).
+
+# Default and root files: D (Project Manager)
+*                               @seba-dvd
+
+# D: user-service + api-gateway, team docs, charter, technical report
+/user-service/                  @seba-dvd
+/api-gateway/                   @seba-dvd
+/docs/team/                     @seba-dvd
+/docs/project-charter/          @seba-dvd
+/docs/raport-tehnic/            @seba-dvd
+
+# M: bidding-service, contracts, architecture, ADRs, UML
+# /bidding-service/             @<M>
+# /docs/api-contracts.md        @<M>
+# /docs/architecture.md         @<M>
+# /docs/decisions/              @<M>
+# /docs/uml/                    @<M>
+
+# K: auction-service, database design
+# /auction-service/             @<K>
+# /docs/database/               @<K>
+
+# A: front-end, product backlog
+# /frontend/                    @<A>
+# /docs/product/                @<A>
+
+# R: notification-service, infrastructure, CI/CD, Postman
+# /notification-service/        @<R>
+# /db/                          @<R>
+# /docker-compose*.yml          @<R>
+# /.github/                     @<R>
+# /postman/                     @<R>
+# /tools/ws-test.html           @<R>
