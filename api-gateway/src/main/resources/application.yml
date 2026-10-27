@@ -1,0 +1,47 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # Routes of docs/api-contracts.md. There is intentionally NO route for /internal/** (answers 404).
+          routes:
+            - id: user-service
+              uri: ${USER_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/auth/**,/api/users/**,/api/wallet/**
+            - id: auction-service
+              uri: ${AUCTION_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/auctions/**
+            - id: bidding-service
+              uri: ${BIDDING_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/bids/**
+            - id: notification-service-ws
+              uri: ${NOTIFICATION_SERVICE_WS_URL:ws://localhost:8084}
+              predicates:
+                - Path=/ws/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  cors:
+    # Comma-separated list; the SPA normally uses same-origin relative URLs (Vite/nginx proxy), so CORS only
+    # matters when a browser calls the gateway directly from another origin.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+  jwt:
+    # TODO(D) S1: used by the HS256 ReactiveJwtDecoder (same secret as user-service).
+    secret: ${JWT_SECRET:dev-only-jwt-secret-change-me-0123456789abcdef}

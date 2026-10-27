@@ -1,0 +1,57 @@
+server:
+  port: ${SERVER_PORT:8082}
+
+spring:
+  application:
+    name: auction-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/auction_db?connectionTimeZone=UTC
+    username: ${AUCTION_DB_USERNAME:auction_service}
+    password: ${AUCTION_DB_PASSWORD:auction-service-dev-pw}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        # java.time.Instant -> DATETIME(6) (Hibernate's default for Instant would be MySQL TIMESTAMP).
+        type:
+          preferred_instant_jdbc_type: TIMESTAMP
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 30MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  internal-api-key: ${INTERNAL_API_KEY:dev-only-internal-api-key}
+  # Photos are stored under random UUID names; in Docker this is the "auction-uploads" volume.
+  upload-dir: ${UPLOAD_DIR:./uploads}
+  scheduling:
+    enabled: ${SCHEDULING_ENABLED:true}
+  anti-sniping:
+    window: 30s
+    extension: 30s
+  clients:
+    user-service-url: ${USER_SERVICE_URL:http://localhost:8081}
+    notification-service-url: ${NOTIFICATION_SERVICE_URL:http://localhost:8084}
+    connect-timeout: 2s
+    read-timeout: 5s

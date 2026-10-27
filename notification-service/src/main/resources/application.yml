@@ -1,0 +1,29 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: notification-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+app:
+  internal-api-key: ${INTERNAL_API_KEY:dev-only-internal-api-key}
+  jwt:
+    # TODO(R) S2: HS256 secret used to validate the JWT of the STOMP CONNECT frame (same as user-service).
+    secret: ${JWT_SECRET:dev-only-jwt-secret-change-me-0123456789abcdef}
+  websocket:
+    # Comma-separated origin patterns allowed to open ws://.../ws (front-end dev, nginx, cloud domain).
+    allowed-origin-patterns: ${WS_ALLOWED_ORIGIN_PATTERNS:http://localhost:*,http://127.0.0.1:*}
