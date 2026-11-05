@@ -51,7 +51,7 @@ Tabelul: Evenimentele Scrum adaptate proiectului
 **Definition of Done.** O sarcină este gata când:
 - codul compilează și testele trec;
 - criteriile de acceptanță sunt îndeplinite;
-- PR-ul spre `develop` este aprobat de reviewer și CI-ul este verde;
+- PR-ul spre `develop` are CI-ul verde;
 - contractele API și colecția Postman sunt actualizate;
 - nu există secrete în cod;
 - funcționalitatea rulează în stack-ul complet din Docker Compose.
@@ -75,7 +75,7 @@ Codul se află într-un singur depozit GitHub (monorepo). Reguli:
 - **`main`:** conține doar versiuni stabile. Primește la final de sprint un pull request din `develop`, integrat de Project Manager.
 - **`develop`:** ramura de integrare. Primește pull request-uri din ramurile personale.
 - **Ramurile personale de lungă durată:** `d/user-gateway`, `m/bidding`, `k/auction`, `a/frontend`, `r/devops`. Fiecare membru lucrează pe ramura lui și o sincronizează cu `develop` după fiecare integrare.
-- **Protecția ramurilor:** `main` și `develop` cer pull request și o aprobare. Force-push-ul și ștergerea sunt interzise.
+- **Protecția ramurilor:** `main` și `develop` primesc modificări doar prin pull request, fără aprobare obligatorie. Force-push-ul și ștergerea sunt interzise.
 - **Merge:** pull request-urile se integrează doar prin merge commit, nu prin squash, ca ramurile de lungă durată să rămână ușor de sincronizat.
 - **Mesajele de commit** respectă convenția Conventional Commits, de exemplu `feat(bidding): ...`. Fiecare pull request închide issue-ul lui prin `Closes #…`.
 - **Integrarea continuă** (GitHub Actions) compilează și testează la fiecare push doar componentele modificate.

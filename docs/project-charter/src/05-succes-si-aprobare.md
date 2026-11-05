@@ -21,7 +21,7 @@ Proiectul este considerat reușit dacă:
 
 - **Funcționalități:**
   - fiecare user story este acceptată de Product Owner (A) la sprint review, pe baza criteriilor „Dat fiind / Când / Atunci” din backlog;
-  - fiecare sarcină tehnică respectă Definition of Done: compilează, testele trec, are revizuire aprobată, contractele și colecția Postman sunt actualizate, nu conține secrete, rulează în Docker Compose.
+  - fiecare sarcină tehnică respectă Definition of Done: compilează, testele trec, CI-ul e verde, contractele și colecția Postman sunt actualizate, nu conține secrete, rulează în Docker Compose.
 - **Documente:** sunt revizuite de cel puțin un alt membru înainte de predare.
 
 ## Aprobare

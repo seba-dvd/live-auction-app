@@ -329,7 +329,7 @@ gh pr create --base develop --head a/frontend --title "feat(frontend): live auct
 - [ ] criteriile „Dat fiind / Când / Atunci” ale poveștii sunt îndeplinite;
 - [ ] pagina are stări de încărcare, gol și eroare;
 - [ ] doar URL-uri relative; nu există secrete în cod;
-- [ ] PR-ul e aprobat de K, iar CI-ul e verde;
+- [ ] PR-ul are CI-ul verde;
 - [ ] funcționează și pe <http://localhost:3000> (nginx).
 
 ## 12. Resurse și ajutor

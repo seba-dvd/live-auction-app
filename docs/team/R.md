@@ -344,7 +344,7 @@ gh pr create --base develop --head r/devops --title "ci: newman in CI" --body "C
 - [ ] criteriile „Gata când…” sunt îndeplinite;
 - [ ] colecția Postman rulează în Newman;
 - [ ] nu există secrete în fișiere sau în loguri de CI;
-- [ ] PR-ul e aprobat de D, iar CI-ul e verde;
+- [ ] PR-ul are CI-ul verde;
 - [ ] `docker compose up -d --build --wait` trece pe un calculator „curat”.
 
 ## 12. Resurse și ajutor

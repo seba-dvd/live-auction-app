@@ -117,7 +117,7 @@ gitGraph
 - [ ] `docs/api-contracts.md` e actualizat dacă s-a schimbat un contract (aprobat de M);
 - [ ] colecția Postman e actualizată pentru endpoint-urile noi;
 - [ ] nu există secrete în cod;
-- [ ] PR-ul e aprobat, CI-ul e verde, issue-ul se închide cu `Closes #…`;
+- [ ] PR-ul are CI-ul verde, issue-ul se închide cu `Closes #…`;
 - [ ] funcționează în stack-ul complet: `docker compose up -d --build`.
 
 ## 6. Registrul riscurilor

@@ -342,7 +342,7 @@ gh pr create --base develop --head k/auction --title "feat(auction): lifecycle j
 - [ ] criteriile „Gata când…” sunt îndeplinite;
 - [ ] tranzițiile de stare și anti-sniping-ul au teste cu `Clock` fix;
 - [ ] contractele, colecția Postman, `docs/database/README.md` și diagramele ER sunt actualizate;
-- [ ] PR-ul e aprobat de M, iar CI-ul e verde;
+- [ ] PR-ul are CI-ul verde;
 - [ ] funcționează în stack-ul complet.
 
 ## 12. Resurse și ajutor
