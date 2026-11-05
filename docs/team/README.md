@@ -1,6 +1,6 @@
 # Echipa Live Auction App: organizare
 
-Pagina comună a echipei. **Ghidul tău personal** este în `docs/team/<ID>.md` (are și o versiune Word în [docx/](docx/)):
+Pagina comună a echipei. **Ghidul tău personal** este în `docs/team/<ID>.md`. Fișierul `.md` este sursa; versiunile Word/PDF din [docx/](docx/) sunt copii generate, doar pentru citit sau printat:
 
 | ID | Membru | Rol | Componente | Ramură | Ghid |
 |---|---|---|---|---|---|
@@ -9,6 +9,35 @@ Pagina comună a echipei. **Ghidul tău personal** este în `docs/team/<ID>.md` 
 | K | K | Scrum Master | `auction-service`, baza de date | `k/auction` | [K.md](K.md) |
 | A | A | Product Owner | `frontend`, backlog | `a/frontend` | [A.md](A.md) |
 | R | R | DevOps Engineer | `notification-service`, Docker, CI/CD, cloud, Postman | `r/devops` | [R.md](R.md) |
+
+## Ce citești și când
+
+Repository-ul are multă documentație, dar **nu trebuie citită toată**. Citește la început doar lista de mai jos (aproximativ 40 de minute); restul îl deschizi când lucrezi la ceva anume.
+
+**La început (toți):**
+
+| Document | Timp | De ce |
+|---|---|---|
+| [README.md](../../README.md) | 5 min | ce face aplicația și cum o pornești |
+| această pagină | 10 min | cum lucrăm: calendar, întâlniri, Definition of Done, depanare |
+| ghidul tău `docs/team/<ID>.md` | 15 min | task-urile tale, pe sprinturi (citește în detaliu doar sprintul curent) |
+| [CONTRIBUTING.md](../../CONTRIBUTING.md) | 5 min | ramuri, commit-uri, PR-uri |
+| secțiunile tale din [api-contracts.md](../api-contracts.md) | 5 min | endpoint-urile pe care le implementezi sau le apelezi |
+
+**De consultat la nevoie:**
+
+| Document | Când îl deschizi | Cine are nevoie mai ales |
+|---|---|---|
+| [api-contracts.md](../api-contracts.md) complet | apelezi alt serviciu sau schimbi un contract | toți |
+| [architecture.md](../architecture.md), [decisions/](../decisions/) (ADR-uri) | vrei să înțelegi de ce e construit așa | M, apoi toți |
+| [database/README.md](../database/README.md) | lucrezi la tabele sau migrații | K, D, M |
+| [uml/](../uml/), [diagrams/png/](../diagrams/png/) | desenezi sau actualizezi diagrame | M, A, K |
+| [product/backlog.md](../product/backlog.md) | scrii sau verifici user stories | A |
+| [raport-tehnic/](../raport-tehnic/), [project-charter/](../project-charter/) | scrii capitolul tău din Raport | autorul capitolului, D |
+
+**Nu trebuie citite:** `CLAUDE.md` și `AGENTS.md` (instrucțiuni pentru asistenții AI) și README-urile din `tools/` și `scripts/` (unelte folosite de D).
+
+**Sursa de adevăr:** arhitectura și baza de date apar și în Raportul Tehnic. După predarea din 30.11 se actualizează doar [architecture.md](../architecture.md) și [database/README.md](../database/README.md); Raportul rămâne versiunea predată.
 
 ## 1. Cine răspunde de ce
 
@@ -108,7 +137,7 @@ gitGraph
 - [ ] Instalează: Git, Docker Desktop (cu WSL2 pe Windows), JDK 21, IntelliJ IDEA, Node 24 LTS (A și cine lucrează la front-end), Postman.
 - [ ] Clonează repository-ul, `git checkout <ramura-ta>`, `cp .env.example .env`.
 - [ ] Pornește stack-ul cu `docker compose up -d --build`. Verifică <http://localhost:8080/actuator/health> și <http://localhost:3000>.
-- [ ] Citește-ți ghidul (`docs/team/<ID>.md`), [CONTRIBUTING.md](../../CONTRIBUTING.md) și [api-contracts.md](../api-contracts.md).
+- [ ] Citește documentele din [Ce citești și când](#ce-citești-și-când) (aproximativ 40 de minute); restul doar la nevoie.
 - [ ] Scrie în chat „setup gata” sau ce nu merge (R te ajută).
 
 ## 8. Depanare
@@ -125,8 +154,12 @@ gitGraph
 
 **Docker Desktop nu pornește („Inference manager … cannot be accessed”)**
 1. Închide Docker Desktop.
-2. Șterge fișierele `%LOCALAPPDATA%\Docker\run\dockerInference` și `userAnalyticsOtlpHttp.sock` (rămase de la o sesiune veche).
-3. Repornește Docker Desktop. Dacă fișierele nu se pot șterge, repornește Windows înainte.
+2. Șterge fișierele `%LOCALAPPDATA%\Docker\run\dockerInference` și `userAnalyticsOtlpHttp.sock` (rămase de la o sesiune veche). Windows de obicei refuză („The file cannot be accessed by the system”), așa că șterge-le din WSL, în PowerShell (înlocuiește `<user>` cu numele folderului tău din `C:\Users`):
+   ```powershell
+   wsl -d docker-desktop -- rm -f /mnt/host/c/Users/<user>/AppData/Local/Docker/run/dockerInference /mnt/host/c/Users/<user>/AppData/Local/Docker/run/userAnalyticsOtlpHttp.sock
+   wsl --terminate docker-desktop
+   ```
+3. Repornește Docker Desktop.
 
 **„port is already allocated” / „address already in use”**
 - **Găsește procesul:** în PowerShell, `netstat -ano | findstr :3306`.
