@@ -33,10 +33,10 @@ Tabelul: Aprobarea cartei proiectului
 | Rol | Nume | Semnătură | Data |
 |---|---|---|---|
 | Project Manager (D) | Pilat David Sebastian | | |
-| Technical Lead (M) | | | |
-| Scrum Master (K) | | | |
-| Product Owner (A) | | | |
-| DevOps Engineer (R) | | | |
+| Technical Lead (M) | Mituleci Tudor | | |
+| Scrum Master (K) | Kubanda Andrei | | |
+| Product Owner (A) | Nicolescu Andreas | | |
+| DevOps Engineer (R) | Luncașu Răzvan | | |
 | Coordonator (pentru luare la cunoștință) | Ș.L. Dr. Ing. Horia Modran | | |
 
 ## Istoricul versiunilor
