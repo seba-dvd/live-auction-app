@@ -15,10 +15,10 @@ Tabelul: Membrii echipei, rolurile și componentele deținute
 | ID | Membru | Rol | Componente | Ramură Git |
 |---|---|---|---|---|
 | D | Pilat David Sebastian | Project Manager | user-service (autentificare, portofel), api-gateway | `d/user-gateway` |
-| M | M | Technical Lead | bidding-service, contractele API, arhitectura | `m/bidding` |
-| K | K | Scrum Master | auction-service, designul bazei de date | `k/auction` |
-| A | A | Product Owner | front-end (React), backlog, diagrama use case | `a/frontend` |
-| R | R | DevOps Engineer | notification-service (WebSocket), Docker, Compose, CI/CD, cloud, Postman | `r/devops` |
+| M | Mituleci Tudor | Technical Lead | bidding-service, contractele API, arhitectura | `m/bidding` |
+| K | Kubanda Andrei | Scrum Master | auction-service, designul bazei de date | `k/auction` |
+| A | Nicolescu Andreas | Product Owner | front-end (React), backlog, diagrama use case | `a/frontend` |
+| R | Luncașu Răzvan | DevOps Engineer | notification-service (WebSocket), Docker, Compose, CI/CD, cloud, Postman | `r/devops` |
 
 ## Responsabilitățile rolurilor
 

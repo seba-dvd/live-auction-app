@@ -35,10 +35,10 @@ Tabelul: Rolurile din echipă
 | ID | Membru | Rol | Componente | Responsabilități principale |
 |---|---|---|---|---|
 | D | Pilat David Sebastian | Project Manager | user-service, api-gateway | planificare, termene, riscuri, administrarea depozitului, release-uri, asamblarea Raportului Tehnic, prezentări |
-| M | M | Technical Lead | bidding-service, contracte API, arhitectură | decizii tehnice, aprobarea contractelor, revizuiri de cod, diagrama de clase, integrare |
-| K | K | Scrum Master | auction-service, baza de date | ceremoniile Scrum, board-ul, eliminarea blocajelor, designul bazei de date |
-| A | A | Product Owner | front-end, backlog | user stories, priorități, acceptanța poveștilor, diagrama use case, scenariul de demo |
-| R | R | DevOps Engineer | notification-service, infrastructură, Postman | Docker, Compose, CI/CD, cloud, colecția Postman, sprijin pentru problemele de mediu |
+| M | Mituleci Tudor | Technical Lead | bidding-service, contracte API, arhitectură | decizii tehnice, aprobarea contractelor, revizuiri de cod, diagrama de clase, integrare |
+| K | Kubanda Andrei | Scrum Master | auction-service, baza de date | ceremoniile Scrum, board-ul, eliminarea blocajelor, designul bazei de date |
+| A | Nicolescu Andreas | Product Owner | front-end, backlog | user stories, priorități, acceptanța poveștilor, diagrama use case, scenariul de demo |
+| R | Luncașu Răzvan | DevOps Engineer | notification-service, infrastructură, Postman | Docker, Compose, CI/CD, cloud, colecția Postman, sprijin pentru problemele de mediu |
 
 ## Matricea RACI
 
