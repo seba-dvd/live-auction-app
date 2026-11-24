@@ -106,3 +106,22 @@ bash tools/docgen/build.sh              # Markdown -> UNITBV-style .docx (+ PDF 
 - **Commits and PRs:** Conventional Commits with scope (`feat(bidding): add bid history endpoint`). The PR body contains `Closes #<issue>`. Merge commits only.
 - **After every merge into `develop`:** `git fetch origin && git merge origin/develop` on your branch.
 - **Never** commit `.env`, secrets or tokens, and never force-push.
+
+## Capcane cunoscute
+
+- Testele din `user-service` rulează pe H2 cu `create-drop` și Flyway oprit (`application-test.yml`), deci `V1__init.sql` (CHECK-uri, unicități) nu e verificat în CI; `ddl-auto: validate` poate pica abia în Docker.
+- `user-service/src/main/resources/application.yml` are o valoare implicită publică pentru `JWT_SECRET`; un JAR pornit fără variabilă rulează cu ea.
+- `scripts/github/setup.sh` are `"required_status_checks": null`: CI-ul nu blochează merge-ul, deși `CONTRIBUTING.md` cere aprobare.
+- Cap. 9 din Raportul Tehnic descrie BCrypt, JWT și ștergerea header-elor ca existente; în cod, gateway-ul are încă `anyExchange().permitAll()`.
+
+## Unde am rămas
+
+Actualizat 2026-11-24, după încheierea sprintului S1 (09.11–22.11).
+
+- Scheletul e complet (5 servicii, frontend, Compose, CI, Postman, contracte, ADR-uri, UML, charter, Raport Tehnic v0.1), dar logica de business din S1 nu e implementată: `user-service` are doar clasele de schelet, iar sarcinile D-S1-01…06 din `docs/team/D.md` sunt deschise. Tag-ul `v0.1.0` nu există.
+- Toate commit-urile de până acum sunt ale lui D; ramurile `m/bidding`, `k/auction`, `a/frontend` și `r/devops` n-au lucru peste schelet.
+- Termene: Raportul Tehnic — intern 27.11, predare 30.11.2026; S2 (23.11–06.12).
+- **Următorul pas:** fiecare responsabil își revizuiește capitolul din Raportul Tehnic până pe 26.11; D rescrie cap. 9–10 separând „proiectat” de „implementat”, apoi D-S1-01–03 (entități, înregistrare, login cu JWT).
+
+Istoricul sesiunilor: `docs/jurnal.md`.
+
