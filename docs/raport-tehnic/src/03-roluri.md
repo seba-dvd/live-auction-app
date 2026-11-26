@@ -18,7 +18,7 @@ Tabelul: Membrii echipei, rolurile și componentele deținute
 | M | Mituleci Tudor | Technical Lead | bidding-service, contractele API, arhitectura | `m/bidding` |
 | K | Kubanda Andrei | Scrum Master | auction-service, designul bazei de date | `k/auction` |
 | A | Nicolescu Andreas | Product Owner | front-end (React), backlog, diagrama use case | `a/frontend` |
-| R | Luncasu Razvan | DevOps Engineer | notification-service (WebSocket), Docker, Compose, CI/CD, cloud, Postman | `r/devops` |
+| R | Luncașu Răzvan | DevOps Engineer | notification-service (WebSocket), Docker, Compose, CI/CD, cloud, Postman | `r/devops` |
 
 ## Responsabilitățile rolurilor
 

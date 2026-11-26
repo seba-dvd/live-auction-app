@@ -8,7 +8,7 @@ Pagina comună a echipei. **Ghidul tău personal** este în `docs/team/<ID>.md`.
 | M | Mituleci Tudor | Technical Lead | `bidding-service`, contracte, arhitectură | `m/bidding` | [M.md](M.md) |
 | K | Kubanda Andrei | Scrum Master | `auction-service`, baza de date | `k/auction` | [K.md](K.md) |
 | A | Nicolescu Andreas | Product Owner | `frontend`, backlog | `a/frontend` | [A.md](A.md) |
-| R | Luncasu Razvan | DevOps Engineer | `notification-service`, Docker, CI/CD, cloud, Postman | `r/devops` | [R.md](R.md) |
+| R | Luncașu Răzvan | DevOps Engineer | `notification-service`, Docker, CI/CD, cloud, Postman | `r/devops` | [R.md](R.md) |
 
 ## Ce citești și când
 

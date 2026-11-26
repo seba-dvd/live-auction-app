@@ -36,7 +36,7 @@ Tabelul: Aprobarea cartei proiectului
 | Technical Lead (M) | Mituleci Tudor | | |
 | Scrum Master (K) | Kubanda Andrei | | |
 | Product Owner (A) | Nicolescu Andreas | | |
-| DevOps Engineer (R) | Luncasu Razvan | | |
+| DevOps Engineer (R) | Luncașu Răzvan | | |
 | Coordonator (pentru luare la cunoștință) | Ș.L. Dr. Ing. Horia Modran | | |
 
 ## Istoricul versiunilor

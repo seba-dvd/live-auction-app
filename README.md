@@ -93,6 +93,6 @@ Pentru a lucra la un singur serviciu: pornești restul cu Compose și rulezi ser
 | M | Mituleci Tudor | Technical Lead | `bidding-service`, contracte API, arhitectură | `m/bidding` | [docs/team/M.md](docs/team/M.md) |
 | K | Kubanda Andrei | Scrum Master | `auction-service`, baza de date | `k/auction` | [docs/team/K.md](docs/team/K.md) |
 | A | Nicolescu Andreas | Product Owner | `frontend`, backlog, diagrama use case | `a/frontend` | [docs/team/A.md](docs/team/A.md) |
-| R | Luncasu Razvan | DevOps Engineer | `notification-service`, Docker/CI/CD/Cloud, Postman | `r/devops` | [docs/team/R.md](docs/team/R.md) |
+| R | Luncașu Răzvan | DevOps Engineer | `notification-service`, Docker/CI/CD/Cloud, Postman | `r/devops` | [docs/team/R.md](docs/team/R.md) |
 
 **Primul pas pentru fiecare membru:** citește ghidul tău din `docs/team/<ID>.md` (are și o versiune Word în `docs/team/docx/`).
