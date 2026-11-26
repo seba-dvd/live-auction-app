@@ -378,7 +378,7 @@ gh pr create --base develop --head m/bidding --title "feat(bidding): place bid f
 - [ ] criteriile „Gata când…” sunt îndeplinite;
 - [ ] fluxul de plasare a ofertei are teste pentru fiecare ramură de eroare și de compensare;
 - [ ] contractele și colecția Postman sunt actualizate;
-- [ ] PR-ul e aprobat de D, iar CI-ul e verde;
+- [ ] PR-ul are CI-ul verde;
 - [ ] scenariul cu două browsere merge în stack-ul complet.
 
 ## 12. Resurse și ajutor

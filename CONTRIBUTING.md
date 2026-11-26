@@ -15,7 +15,7 @@ Regulile de lucru cu Git și GitHub pentru echipa Live Auction App. Sunt obligat
 | `r/devops` | R: `notification-service`, Docker, CI/CD, Postman | R |
 
 - **Ramurile personale sunt de lungă durată.** Proprietarul face push liber în ele, fără PR.
-- **Protecția pentru `main` și `develop`:** e nevoie de PR cu o aprobare, aprobările vechi se anulează la un push nou, iar force-push și ștergerea sunt interzise.
+- **Protecția pentru `main` și `develop`:** schimbările intră doar prin PR, **fără aprobare obligatorie**; force-push și ștergerea sunt interzise.
 - **Merge doar cu merge commit.** Fără squash sau rebase, ca ramurile de lungă durată să rămână ușor de sincronizat.
 - **Ramurile nu se șterg** după merge.
 
@@ -58,8 +58,8 @@ git push origin <ramura-ta>
    ```
    Sau din interfața GitHub: **Compare & pull request**, cu baza `develop`.
 3. Completează șablonul. Corpul PR-ului conține `Closes #<număr-issue>`.
-4. Adaugă reviewer-ul din harta de mai sus. CI-ul trebuie să fie verde.
-5. După aprobare, autorul face **Merge pull request** (merge commit).
+4. Opțional, adaugă reviewer-ul din harta de mai sus pentru o a doua părere. CI-ul trebuie să fie verde.
+5. Când CI-ul e verde, autorul face **Merge pull request** (merge commit). Nu e nevoie de aprobare.
 6. **Toți membrii** se sincronizează: `git fetch origin && git merge origin/develop`.
 
 ## 5. Conflicte de merge
@@ -116,7 +116,7 @@ Un task e „gata” când:
 - [ ] `docs/api-contracts.md` e actualizat dacă s-a schimbat un contract (aprobat de M);
 - [ ] colecția Postman e actualizată pentru endpoint-urile noi sau modificate;
 - [ ] nu există secrete în cod, iar configurația vine din variabile de mediu cu valori implicite de dezvoltare;
-- [ ] PR-ul spre `develop` e aprobat, CI-ul e verde, iar issue-ul se închide prin `Closes #…`;
+- [ ] PR-ul spre `develop` are CI-ul verde, iar issue-ul se închide prin `Closes #…`;
 - [ ] funcționalitatea merge în stack-ul complet: `docker compose up -d --build`.
 
 ## 8. Issues și board

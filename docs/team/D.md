@@ -425,7 +425,7 @@ gh pr create --base develop --head d/user-gateway --title "feat(user): wallet to
 **Release la final de sprint (doar tu):**
 ```bash
 gh pr create --base main --head develop --title "release: v0.1.0" --body "Sprint S1"
-# după aprobare și merge:
+# după merge:
 git fetch origin && git tag -a v0.1.0 origin/main -m "Sprint S1" && git push origin v0.1.0
 ```
 
@@ -438,7 +438,7 @@ git fetch origin && git tag -a v0.1.0 origin/main -m "Sprint S1" && git push ori
 - [ ] fiecare regulă de bani are test: rezervare, eliberare, decontare;
 - [ ] contractele și colecția Postman sunt actualizate;
 - [ ] nu există secrete în cod sau în loguri;
-- [ ] PR-ul spre `develop` e aprobat de M, iar CI-ul e verde;
+- [ ] PR-ul spre `develop` are CI-ul verde;
 - [ ] funcționează în stack-ul complet (`docker compose up -d --build`).
 
 ## 12. Resurse și ajutor
