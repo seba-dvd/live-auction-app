@@ -2,6 +2,8 @@
 
 # Securitate
 
+Capitolul descrie **modelul de securitate proiectat** pentru aplicație. La data predării, o parte din măsuri sunt deja în cod, iar restul sunt planificate pe sprinturi; situația exactă este în secțiunea „Stadiul implementării” de la finalul capitolului.
+
 ## Autentificare
 
 **Înregistrarea:** user-service salvează parola doar ca **hash BCrypt**, niciodată în clar.
@@ -49,9 +51,34 @@ Gateway-ul doar transmite conexiunea WebSocket, deci notification-service valide
 - **Secrete:** cheia JWT, cheia internă și parolele bazei de date vin din variabile de mediu; fișierul `.env` nu intră în depozit.
 - **Baza de date:** fiecare serviciu are un utilizator MySQL cu drepturi doar pe schema proprie.
 
+## Stadiul implementării
+
+Tabelul: Stadiul măsurilor de securitate la 26.11.2026
+
+| Măsură | Stadiu | Responsabil, sarcină |
+|---|---|---|
+| Secretele (cheia JWT, cheia internă, parolele bazei de date) vin din variabile de mediu; `.env` nu intră în depozit | implementat | R, S0 |
+| Câte un utilizator MySQL cu drepturi doar pe schema proprie | implementat (`db/init/01-init.sh`) | R, S0 |
+| Căile `/internal/**` nu sunt rutate de gateway (404 din exterior) | implementat (rutele gateway-ului) | D, S0 |
+| CORS configurat doar la gateway, pentru originile front-end-ului | implementat | D, S0 |
+| Originile acceptate pentru conexiunea WebSocket | implementat | R, S0 |
+| Hash BCrypt pentru parole | parțial: encoder-ul BCrypt este configurat, înregistrarea urmează | D, D-S1-02 |
+| Emiterea JWT HS256 la autentificare | proiectat | D, D-S1-03 |
+| Validarea JWT la gateway, rutele publice, 401 în format RFC 9457 | proiectat; deocamdată gateway-ul permite toate cererile | D, D-S1-05 |
+| Ștergerea și propagarea header-elor de identitate | proiectat | D, D-S1-06 |
+| Verificarea `X-Internal-Key` pe `/internal/**` | proiectat; cheia este deja configurată în toate serviciile | D, D-S2-03 și proprietarii serviciilor |
+| Validarea JWT din cadrul STOMP `CONNECT` | proiectat | R, S2 |
+| Validarea cererilor și erorile uniforme cu cod stabil | proiectat | fiecare proprietar de serviciu, S1–S2 |
+| Validarea și denumirea UUID a fotografiilor | proiectat | K, S2 |
+| Porturi nepublicate și HTTPS în producție | proiectat (`docker-compose.prod.yml`) | R, S3–S4 |
+
+Măsurile marcate „proiectat” sunt descrise în sarcinile din ghidurile membrilor (`docs/team/`) și au câte un issue pe GitHub. Capitolul se actualizează la fiecare sprint review.
+
 ## Riscuri de securitate și măsuri
 
-Tabelul: Riscuri de securitate (după OWASP Top 10) și măsurile luate
+Tabelul de mai jos leagă riscurile OWASP de măsurile proiectate. Stadiul fiecărei măsuri este cel din tabelul anterior.
+
+Tabelul: Riscuri de securitate (după OWASP Top 10) și măsurile proiectate
 
 | Risc [9] | Măsură |
 |---|---|

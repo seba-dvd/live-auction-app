@@ -112,7 +112,7 @@ bash tools/docgen/build.sh              # Markdown -> UNITBV-style .docx (+ PDF 
 - Testele din `user-service` rulează pe H2 cu `create-drop` și Flyway oprit (`application-test.yml`), deci `V1__init.sql` (CHECK-uri, unicități) nu e verificat în CI; `ddl-auto: validate` poate pica abia în Docker.
 - `user-service/src/main/resources/application.yml` are o valoare implicită publică pentru `JWT_SECRET`; un JAR pornit fără variabilă rulează cu ea.
 - `scripts/github/setup.sh` are `"required_status_checks": null`: CI-ul nu blochează merge-ul, deși `CONTRIBUTING.md` cere aprobare.
-- Cap. 9 din Raportul Tehnic descrie BCrypt, JWT și ștergerea header-elor ca existente; în cod, gateway-ul are încă `anyExchange().permitAll()`.
+- Cap. 9 din Raportul Tehnic descrie modelul de securitate proiectat; tabelul „Stadiul implementării” (cap. 9) și „Stadiul la data predării” (cap. 10) trebuie actualizate când se termină D-S1-02…06. În cod, gateway-ul are încă `anyExchange().permitAll()`.
 
 ## Unde am rămas
 

@@ -14,6 +14,21 @@ Tabelul: Planul de implementare pe sprinturi
 | S3 (până la 20.12) | anti-sniping; închiderea automată și decontarea; notificările; pagina live; testul de concurență; colecția Postman completă; prima implementare manuală în cloud |
 | S4 (până la 17.01) | livrarea automată în cloud; HTTPS; revizuirea securității; finisarea interfeței; scenariul de demonstrație și prezentarea finală |
 
+## Stadiul la data predării
+
+Tabelul: Stadiul proiectului la 26.11.2026
+
+| Domeniu | Stadiu |
+|---|---|
+| Depozitul, ramurile, regulile de lucru, issue-urile pe sprinturi | realizat (S0) |
+| Scheletul celor cinci servicii și al front-end-ului; Docker Compose; CI pe fiecare push | realizat (S0): toate serviciile pornesc, testele de încărcare a contextului trec |
+| Contractele API v1, arhitectura, ADR-urile, diagramele UML | realizat (S1) |
+| Designul bazei de date și migrațiile inițiale (`V1__init.sql`) | realizat (S1); schema `bidding_db` este verificată automat în CI pe MySQL real |
+| Entitățile, CRUD-ul de bază, înregistrarea, autentificarea, validarea JWT la gateway | neîncepute; se reportează din S1 în S2 |
+| Licitarea, ciclul de viață, WebSocket, decontarea, cloud | planificate pentru S2–S4, conform tabelului de mai sus |
+
+**Concluzia stadiului:** livrabilele de proiectare din S0 și S1 sunt complete, dar implementarea logicii de business din S1 a întârziat. Sarcinile reportate au prioritate în S2, înaintea sarcinilor noi. Riscul de integrare târzie este redus de contractele deja fixate și de profilul `stub`, care permit fiecărui serviciu să fie dezvoltat și testat separat.
+
 ## Riscuri principale
 
 Tabelul: Riscurile principale ale proiectului
@@ -42,7 +57,7 @@ Tabelul: Riscurile principale ale proiectului
 - notificările trimise doar după commit;
 - sincronizarea cronometrelor cu ceasul serverului.
 
-Toate sunt documentate în ADR-uri și pot fi demonstrate și testate.
+Toate sunt documentate în ADR-uri și sunt proiectate astfel încât să poată fi demonstrate și testate automat pe măsură ce sunt implementate.
 
 **Metodologia:** Scrum, cu roluri distincte și componente deținute de fiecare membru, permite lucrul în paralel. Contractele API comune și profilul `stub` reduc dependențele dintre membri.
 
