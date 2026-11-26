@@ -2,10 +2,9 @@
 # Do NOT enable "Require review from Code Owners" in branch protection (single owners would block their own PRs).
 # The last matching pattern wins.
 #
-# TODO(D): after M, K, A, R accept the repository invitation, replace <M>, <K>, <A>, <R> with their
-# GitHub usernames and uncomment their lines (scripts/github/add-members.sh prints the exact lines).
+# Usernames are kept in sync with scripts/github/team.env.
 
-# Default and root files: D (Project Manager)
+# Default and root files: D (Project Manager), Pilat David Sebastian
 *                               @seba-dvd
 
 # D: user-service + api-gateway, team docs, charter, technical report
@@ -15,25 +14,25 @@
 /docs/project-charter/          @seba-dvd
 /docs/raport-tehnic/            @seba-dvd
 
-# M: bidding-service, contracts, architecture, ADRs, UML
-# /bidding-service/             @<M>
-# /docs/api-contracts.md        @<M>
-# /docs/architecture.md         @<M>
-# /docs/decisions/              @<M>
-# /docs/uml/                    @<M>
+# M: bidding-service, contracts, architecture, ADRs, UML (Mituleci Tudor)
+/bidding-service/               @TudorMituleci
+/docs/api-contracts.md          @TudorMituleci
+/docs/architecture.md           @TudorMituleci
+/docs/decisions/                @TudorMituleci
+/docs/uml/                      @TudorMituleci
 
-# K: auction-service, database design
-# /auction-service/             @<K>
-# /docs/database/               @<K>
+# K: auction-service, database design (Kubanda Andrei)
+/auction-service/               @KubandaAndrei
+/docs/database/                 @KubandaAndrei
 
-# A: front-end, product backlog
-# /frontend/                    @<A>
-# /docs/product/                @<A>
+# A: front-end, product backlog (Nicolescu Andreas)
+/frontend/                      @AndreasNicolescu
+/docs/product/                  @AndreasNicolescu
 
-# R: notification-service, infrastructure, CI/CD, Postman
-# /notification-service/        @<R>
-# /db/                          @<R>
-# /docker-compose*.yml          @<R>
-# /.github/                     @<R>
-# /postman/                     @<R>
-# /tools/ws-test.html           @<R>
+# R: notification-service, infrastructure, CI/CD, Postman (Luncasu Razvan)
+/notification-service/          @adevaratulrazvanlrs
+/db/                            @adevaratulrazvanlrs
+/docker-compose*.yml            @adevaratulrazvanlrs
+/.github/                       @adevaratulrazvanlrs
+/postman/                       @adevaratulrazvanlrs
+/tools/ws-test.html             @adevaratulrazvanlrs

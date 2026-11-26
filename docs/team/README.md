@@ -5,10 +5,10 @@ Pagina comună a echipei. **Ghidul tău personal** este în `docs/team/<ID>.md`.
 | ID | Membru | Rol | Componente | Ramură | Ghid |
 |---|---|---|---|---|---|
 | D | Pilat David Sebastian | Project Manager | `user-service`, `api-gateway` | `d/user-gateway` | [D.md](D.md) |
-| M | M | Technical Lead | `bidding-service`, contracte, arhitectură | `m/bidding` | [M.md](M.md) |
-| K | K | Scrum Master | `auction-service`, baza de date | `k/auction` | [K.md](K.md) |
-| A | A | Product Owner | `frontend`, backlog | `a/frontend` | [A.md](A.md) |
-| R | R | DevOps Engineer | `notification-service`, Docker, CI/CD, cloud, Postman | `r/devops` | [R.md](R.md) |
+| M | Mituleci Tudor | Technical Lead | `bidding-service`, contracte, arhitectură | `m/bidding` | [M.md](M.md) |
+| K | Kubanda Andrei | Scrum Master | `auction-service`, baza de date | `k/auction` | [K.md](K.md) |
+| A | Nicolescu Andreas | Product Owner | `frontend`, backlog | `a/frontend` | [A.md](A.md) |
+| R | Luncasu Razvan | DevOps Engineer | `notification-service`, Docker, CI/CD, cloud, Postman | `r/devops` | [R.md](R.md) |
 
 ## Ce citești și când
 

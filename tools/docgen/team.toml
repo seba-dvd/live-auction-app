@@ -9,20 +9,20 @@ role = "Project Manager"
 
 [[member]]
 id = "M"
-name = ""
+name = "Mituleci Tudor"
 role = "Technical Lead"
 
 [[member]]
 id = "K"
-name = ""
+name = "Kubanda Andrei"
 role = "Scrum Master"
 
 [[member]]
 id = "A"
-name = ""
+name = "Nicolescu Andreas"
 role = "Product Owner"
 
 [[member]]
 id = "R"
-name = ""
+name = "Luncasu Razvan"
 role = "DevOps Engineer"
